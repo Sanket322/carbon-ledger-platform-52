@@ -20,10 +20,10 @@ import howItWorks from "@/assets/how-it-works.jpg";
 
 const Index = () => {
   const stats = [
-    { icon: Leaf, value: "1.2M", label: "Tons CO₂ Offset", trend: "+12% this month" },
-    { icon: BarChart3, value: "5,847", label: "Credits Traded", trend: "+8% this week" },
-    { icon: Shield, value: "234", label: "Verified Projects" },
-    { icon: Globe, value: "48", label: "Countries" },
+    { icon: <Leaf className="h-6 w-6 text-primary" />, value: "1.2M", label: "Tons CO₂ Offset", trend: "+12% this month" },
+    { icon: <BarChart3 className="h-6 w-6 text-primary" />, value: "5,847", label: "Credits Traded", trend: "+8% this week" },
+    { icon: <Shield className="h-6 w-6 text-primary" />, value: "234", label: "Verified Projects" },
+    { icon: <Globe className="h-6 w-6 text-primary" />, value: "48", label: "Countries" },
   ];
 
   const features = [

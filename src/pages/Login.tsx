@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -11,10 +12,11 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const { signIn } = useAuth();
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Authentication will be implemented with Lovable Cloud
-    console.log("Login attempt:", { email, password });
+    await signIn(email, password);
   };
 
   return (
@@ -85,13 +87,6 @@ const Login = () => {
           </Link>
         </p>
 
-        {/* Note */}
-        <div className="mt-6 rounded-lg bg-muted/50 p-4">
-          <p className="text-xs text-muted-foreground">
-            <strong>Note:</strong> Authentication requires Lovable Cloud to be enabled. 
-            This UI is ready for backend integration.
-          </p>
-        </div>
       </Card>
     </div>
   );

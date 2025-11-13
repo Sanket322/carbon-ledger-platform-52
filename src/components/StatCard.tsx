@@ -1,14 +1,13 @@
-import { LucideIcon } from "lucide-react";
 import { Card } from "@/components/ui/card";
 
 interface StatCardProps {
-  icon: LucideIcon;
+  icon: React.ReactNode;
   value: string;
   label: string;
   trend?: string;
 }
 
-const StatCard = ({ icon: Icon, value, label, trend }: StatCardProps) => {
+const StatCard = ({ icon, value, label, trend }: StatCardProps) => {
   return (
     <Card className="relative overflow-hidden border-border bg-gradient-card p-6 transition-all hover:shadow-lg">
       <div className="flex items-start justify-between">
@@ -18,7 +17,7 @@ const StatCard = ({ icon: Icon, value, label, trend }: StatCardProps) => {
           {trend && <p className="text-xs text-success">{trend}</p>}
         </div>
         <div className="rounded-lg bg-primary/10 p-3">
-          <Icon className="h-6 w-6 text-primary" />
+          {icon}
         </div>
       </div>
       <div className="absolute -bottom-2 -right-2 h-24 w-24 rounded-full bg-primary/5" />
