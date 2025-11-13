@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -17,10 +19,17 @@ const Signup = () => {
     agreeToTerms: false,
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const { signUp } = useAuth();
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Authentication will be implemented with Lovable Cloud
-    console.log("Signup attempt:", formData);
+    
+    if (formData.password !== formData.confirmPassword) {
+      toast.error("Passwords do not match");
+      return;
+    }
+
+    await signUp(formData.email, formData.password, formData.fullName);
   };
 
   const handleChange = (field: string, value: string | boolean) => {
@@ -137,13 +146,6 @@ const Signup = () => {
           </Link>
         </p>
 
-        {/* Note */}
-        <div className="mt-6 rounded-lg bg-muted/50 p-4">
-          <p className="text-xs text-muted-foreground">
-            <strong>Note:</strong> Authentication requires Lovable Cloud to be enabled. 
-            This UI is ready for backend integration with user profiles and KYC verification.
-          </p>
-        </div>
       </Card>
     </div>
   );

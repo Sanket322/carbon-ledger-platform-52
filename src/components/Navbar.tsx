@@ -1,11 +1,14 @@
-import { Link } from "react-router-dom";
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Leaf, Menu } from "lucide-react";
-import { useState } from "react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const { user, signOut } = useAuth();
+  const navigate = useNavigate();
 
   const navLinks = [
     { name: "Marketplace", path: "/marketplace" },
@@ -40,12 +43,28 @@ const Navbar = () => {
 
           {/* CTA Buttons */}
           <div className="hidden items-center gap-3 md:flex">
-            <Button variant="ghost" asChild>
-              <Link to="/login">Login</Link>
-            </Button>
-            <Button variant="hero" asChild>
-              <Link to="/signup">Get Started</Link>
-            </Button>
+            {user ? (
+              <>
+                <Button variant="ghost" asChild>
+                  <Link to="/dashboard">Dashboard</Link>
+                </Button>
+                <Button variant="ghost" asChild>
+                  <Link to="/profile">Profile</Link>
+                </Button>
+                <Button variant="outline-primary" onClick={signOut}>
+                  Logout
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button variant="ghost" asChild>
+                  <Link to="/login">Login</Link>
+                </Button>
+                <Button variant="hero" asChild>
+                  <Link to="/signup">Get Started</Link>
+                </Button>
+              </>
+            )}
           </div>
 
           {/* Mobile Menu */}
@@ -68,16 +87,36 @@ const Navbar = () => {
                   </Link>
                 ))}
                 <div className="mt-4 flex flex-col gap-3">
-                  <Button variant="outline" asChild>
-                    <Link to="/login" onClick={() => setIsOpen(false)}>
-                      Login
-                    </Link>
-                  </Button>
-                  <Button variant="hero" asChild>
-                    <Link to="/signup" onClick={() => setIsOpen(false)}>
-                      Get Started
-                    </Link>
-                  </Button>
+                  {user ? (
+                    <>
+                      <Button variant="outline" asChild>
+                        <Link to="/dashboard" onClick={() => setIsOpen(false)}>
+                          Dashboard
+                        </Link>
+                      </Button>
+                      <Button variant="outline" asChild>
+                        <Link to="/profile" onClick={() => setIsOpen(false)}>
+                          Profile
+                        </Link>
+                      </Button>
+                      <Button variant="hero" onClick={() => { signOut(); setIsOpen(false); }}>
+                        Logout
+                      </Button>
+                    </>
+                  ) : (
+                    <>
+                      <Button variant="outline" asChild>
+                        <Link to="/login" onClick={() => setIsOpen(false)}>
+                          Login
+                        </Link>
+                      </Button>
+                      <Button variant="hero" asChild>
+                        <Link to="/signup" onClick={() => setIsOpen(false)}>
+                          Get Started
+                        </Link>
+                      </Button>
+                    </>
+                  )}
                 </div>
               </div>
             </SheetContent>
