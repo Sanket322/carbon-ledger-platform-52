@@ -14,6 +14,8 @@ import {
   ArrowRight,
   Globe,
   Target,
+  Users,
+  Lightbulb,
 } from "lucide-react";
 import heroBg from "@/assets/hero-bg.jpg";
 import howItWorks from "@/assets/how-it-works.jpg";
@@ -226,6 +228,96 @@ const Index = () => {
                 className="rounded-2xl shadow-xl"
               />
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* About Section */}
+      <section className="py-16">
+        <div className="container mx-auto px-4">
+          <div className="mx-auto max-w-4xl text-center mb-16">
+            <Badge className="mb-4 bg-primary/10 text-primary">
+              About Offst.AI
+            </Badge>
+            <h2 className="mb-6 text-3xl font-bold text-foreground md:text-4xl">
+              Building a Sustainable Future Through Carbon Markets
+            </h2>
+            <p className="text-lg text-muted-foreground">
+              Offst.AI is the leading platform for verified carbon credit trading, connecting project owners, 
+              traders, and buyers in a transparent, secure marketplace that drives real environmental impact.
+            </p>
+          </div>
+
+          {/* Mission */}
+          <div className="mx-auto max-w-4xl text-center mb-16">
+            <h3 className="mb-4 text-2xl font-bold text-foreground md:text-3xl">
+              Our Mission
+            </h3>
+            <p className="text-lg text-muted-foreground">
+              To accelerate global climate action by creating the most trusted, transparent, and efficient 
+              marketplace for carbon credits. We empower organizations and individuals to measurably reduce 
+              their carbon footprint while supporting verified environmental projects worldwide.
+            </p>
+          </div>
+
+          {/* Core Values */}
+          <div className="mb-12 text-center">
+            <h3 className="mb-4 text-2xl font-bold text-foreground md:text-3xl">
+              Our Core Values
+            </h3>
+            <p className="mx-auto max-w-2xl text-muted-foreground mb-12">
+              The principles that guide everything we do at Offst.AI
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
+            <Card className="border-border bg-card p-6 text-center">
+              <div className="mb-4 inline-flex rounded-lg bg-primary/10 p-3">
+                <Target className="h-6 w-6 text-primary" />
+              </div>
+              <h4 className="mb-2 text-lg font-semibold text-foreground">
+                Transparency
+              </h4>
+              <p className="text-sm text-muted-foreground">
+                Every carbon credit on our platform is verified and traceable to internationally recognized registries.
+              </p>
+            </Card>
+
+            <Card className="border-border bg-card p-6 text-center">
+              <div className="mb-4 inline-flex rounded-lg bg-primary/10 p-3">
+                <Users className="h-6 w-6 text-primary" />
+              </div>
+              <h4 className="mb-2 text-lg font-semibold text-foreground">
+                Trust
+              </h4>
+              <p className="text-sm text-muted-foreground">
+                We ensure all projects meet rigorous verification standards and maintain complete documentation.
+              </p>
+            </Card>
+
+            <Card className="border-border bg-card p-6 text-center">
+              <div className="mb-4 inline-flex rounded-lg bg-primary/10 p-3">
+                <Globe className="h-6 w-6 text-primary" />
+              </div>
+              <h4 className="mb-2 text-lg font-semibold text-foreground">
+                Global Impact
+              </h4>
+              <p className="text-sm text-muted-foreground">
+                Connecting projects from 48+ countries with buyers worldwide to maximize environmental impact.
+              </p>
+            </Card>
+
+            <Card className="border-border bg-card p-6 text-center">
+              <div className="mb-4 inline-flex rounded-lg bg-primary/10 p-3">
+                <Lightbulb className="h-6 w-6 text-primary" />
+              </div>
+              <h4 className="mb-2 text-lg font-semibold text-foreground">
+                Innovation
+              </h4>
+              <p className="text-sm text-muted-foreground">
+                Leveraging cutting-edge technology to make carbon credit trading efficient, secure, and accessible.
+              </p>
+            </Card>
           </div>
         </div>
       </section>
