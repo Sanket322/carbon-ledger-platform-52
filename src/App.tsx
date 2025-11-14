@@ -16,7 +16,15 @@ import Dashboard from "./pages/Dashboard";
 import Wallet from "./pages/Wallet";
 import RegisterProject from "./pages/RegisterProject";
 import Profile from "./pages/Profile";
-import Admin from "./pages/Admin";
+import AdminLayout from "./layouts/AdminLayout";
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import UserManagement from "./pages/admin/UserManagement";
+import RoleManagement from "./pages/admin/RoleManagement";
+import ProjectManagement from "./pages/admin/ProjectManagement";
+import KYCManagement from "./pages/admin/KYCManagement";
+import TransactionMonitoring from "./pages/admin/TransactionMonitoring";
+import Reports from "./pages/admin/Reports";
+import Settings from "./pages/admin/Settings";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -42,7 +50,18 @@ const App = () => (
               <Route path="/wallet" element={<ProtectedRoute><Wallet /></ProtectedRoute>} />
               <Route path="/register-project" element={<ProtectedRoute><RegisterProject /></ProtectedRoute>} />
               <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
-              <Route path="/admin" element={<ProtectedRoute><Admin /></ProtectedRoute>} />
+              
+              {/* Admin Routes */}
+              <Route path="/admin" element={<ProtectedRoute><AdminLayout /></ProtectedRoute>}>
+                <Route index element={<AdminDashboard />} />
+                <Route path="users" element={<UserManagement />} />
+                <Route path="roles" element={<RoleManagement />} />
+                <Route path="projects" element={<ProjectManagement />} />
+                <Route path="kyc" element={<KYCManagement />} />
+                <Route path="transactions" element={<TransactionMonitoring />} />
+                <Route path="reports" element={<Reports />} />
+                <Route path="settings" element={<Settings />} />
+              </Route>
             
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
