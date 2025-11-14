@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
+import { useUserRole } from "@/hooks/useUserRole";
 import { Button } from "@/components/ui/button";
 import { Leaf, Menu } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -8,6 +9,7 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { user, signOut } = useAuth();
+  const { isAdmin } = useUserRole();
   const navigate = useNavigate();
 
   const navLinks = [
@@ -48,6 +50,11 @@ const Navbar = () => {
                 <Button variant="ghost" asChild>
                   <Link to="/dashboard">Dashboard</Link>
                 </Button>
+                {isAdmin && (
+                  <Button variant="ghost" asChild>
+                    <Link to="/admin">Admin</Link>
+                  </Button>
+                )}
                 <Button variant="ghost" asChild>
                   <Link to="/profile">Profile</Link>
                 </Button>
@@ -94,6 +101,13 @@ const Navbar = () => {
                           Dashboard
                         </Link>
                       </Button>
+                      {isAdmin && (
+                        <Button variant="outline" asChild>
+                          <Link to="/admin" onClick={() => setIsOpen(false)}>
+                            Admin
+                          </Link>
+                        </Button>
+                      )}
                       <Button variant="outline" asChild>
                         <Link to="/profile" onClick={() => setIsOpen(false)}>
                           Profile
