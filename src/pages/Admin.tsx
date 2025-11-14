@@ -203,19 +203,24 @@ export default function Admin() {
 
   const handleToggleRole = async (userId: string, role: string, hasRole: boolean) => {
     try {
+      const validRole = role as "admin" | "buyer" | "trader" | "project_owner";
+      
       if (hasRole) {
         const { error } = await supabase
           .from("user_roles")
           .delete()
           .eq("user_id", userId)
-          .eq("role", role);
+          .eq("role", validRole);
 
         if (error) throw error;
         toast.success(`${role} role removed`);
       } else {
         const { error } = await supabase
           .from("user_roles")
-          .insert({ user_id: userId, role });
+          .insert([{ 
+            user_id: userId, 
+            role: validRole 
+          }]);
 
         if (error) throw error;
         toast.success(`${role} role added`);
