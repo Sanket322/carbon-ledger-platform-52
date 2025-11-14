@@ -193,8 +193,10 @@ const ProjectDetail = () => {
                 </div>
               </div>
 
-              <Button variant="hero" size="lg" className="mb-3 w-full">
-                Buy Credits
+              <Button variant="hero" size="lg" className="mb-3 w-full" asChild>
+                <Link to={`/purchase/${project.id}`}>
+                  Buy Credits
+                </Link>
               </Button>
               <Button variant="outline" size="lg" className="w-full">
                 Add to Watchlist

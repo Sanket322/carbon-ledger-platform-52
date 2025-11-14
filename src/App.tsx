@@ -16,6 +16,8 @@ import Dashboard from "./pages/Dashboard";
 import Wallet from "./pages/Wallet";
 import RegisterProject from "./pages/RegisterProject";
 import Profile from "./pages/Profile";
+import PurchaseProject from "./pages/PurchaseProject";
+import Knowledge from "./pages/Knowledge";
 import AdminLayout from "./layouts/AdminLayout";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import UserManagement from "./pages/admin/UserManagement";
@@ -42,6 +44,7 @@ const App = () => (
             <Route path="/project/:id" element={<ProjectDetail />} />
             <Route path="/about" element={<About />} />
             <Route path="/how-it-works" element={<HowItWorks />} />
+            <Route path="/knowledge" element={<Knowledge />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
             
@@ -50,6 +53,7 @@ const App = () => (
               <Route path="/wallet" element={<ProtectedRoute><Wallet /></ProtectedRoute>} />
               <Route path="/register-project" element={<ProtectedRoute><RegisterProject /></ProtectedRoute>} />
               <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+              <Route path="/purchase/:id" element={<ProtectedRoute><PurchaseProject /></ProtectedRoute>} />
               
               {/* Admin Routes */}
               <Route path="/admin" element={<ProtectedRoute><AdminLayout /></ProtectedRoute>}>
