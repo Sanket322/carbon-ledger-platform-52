@@ -9,15 +9,17 @@ import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Leaf } from "lucide-react";
+import { Leaf, Building2 } from "lucide-react";
 
-const Signup = () => {
+const ProjectOwnerSignup = () => {
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
     password: "",
     confirmPassword: "",
+    companyName: "",
     phone: "",
+    country: "",
     agreeToTerms: false,
   });
 
@@ -36,13 +38,15 @@ const Signup = () => {
       return;
     }
 
-    // Sign up as buyer
+    // Sign up as project owner
     const { error } = await signUp(
       formData.email, 
       formData.password, 
       formData.fullName,
       {
+        company_name: formData.companyName,
         phone: formData.phone,
+        country: formData.country,
       }
     );
 
@@ -56,11 +60,11 @@ const Signup = () => {
             .from("user_roles")
             .insert({
               user_id: user.id,
-              role: "buyer",
+              role: "project_owner",
             });
 
           if (roleError) {
-            console.error("Error assigning buyer role:", roleError);
+            console.error("Error assigning project_owner role:", roleError);
           }
         }
       }, 1000);
@@ -82,9 +86,14 @@ const Signup = () => {
         </Link>
 
         <div className="mb-6 text-center">
-          <h1 className="mb-2 text-2xl font-bold text-foreground">Create Buyer Account</h1>
+          <div className="mb-4 flex justify-center">
+            <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10">
+              <Building2 className="h-6 w-6 text-primary" />
+            </div>
+          </div>
+          <h1 className="mb-2 text-2xl font-bold text-foreground">Create Project Owner Account</h1>
           <p className="text-sm text-muted-foreground">
-            Purchase and retire carbon credits to offset your emissions
+            Register and manage carbon credit projects
           </p>
         </div>
 
@@ -101,13 +110,25 @@ const Signup = () => {
             />
           </div>
 
+          <div className="space-y-2">
+            <Label htmlFor="companyName">Company Name *</Label>
+            <Input
+              id="companyName"
+              type="text"
+              placeholder="Your Company Ltd."
+              value={formData.companyName}
+              onChange={(e) => handleChange("companyName", e.target.value)}
+              required
+            />
+          </div>
+
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
               <Label htmlFor="email">Email *</Label>
               <Input
                 id="email"
                 type="email"
-                placeholder="your@email.com"
+                placeholder="contact@company.com"
                 value={formData.email}
                 onChange={(e) => handleChange("email", e.target.value)}
                 required
@@ -115,15 +136,28 @@ const Signup = () => {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="phone">Phone Number</Label>
+              <Label htmlFor="phone">Phone Number *</Label>
               <Input
                 id="phone"
                 type="tel"
                 placeholder="+1 (555) 000-0000"
                 value={formData.phone}
                 onChange={(e) => handleChange("phone", e.target.value)}
+                required
               />
             </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="country">Country *</Label>
+            <Input
+              id="country"
+              type="text"
+              placeholder="United States"
+              value={formData.country}
+              onChange={(e) => handleChange("country", e.target.value)}
+              required
+            />
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2">
@@ -170,7 +204,7 @@ const Signup = () => {
           </div>
 
           <Button type="submit" variant="hero" size="lg" className="w-full">
-            Create Buyer Account
+            Create Project Owner Account
           </Button>
         </form>
 
@@ -184,9 +218,9 @@ const Signup = () => {
             </Link>
           </p>
           <p>
-            Are you a project owner?{" "}
-            <Link to="/signup/project-owner" className="font-medium text-primary hover:underline">
-              Register your project
+            Are you a carbon credit buyer?{" "}
+            <Link to="/signup" className="font-medium text-primary hover:underline">
+              Create buyer account
             </Link>
           </p>
         </div>
@@ -195,4 +229,4 @@ const Signup = () => {
   );
 };
 
-export default Signup;
+export default ProjectOwnerSignup;
