@@ -43,28 +43,9 @@ const Signup = () => {
       formData.fullName,
       {
         phone: formData.phone,
+        user_role: "buyer",
       }
     );
-
-    if (!error) {
-      // Wait a bit for user to be created
-      setTimeout(async () => {
-        const { data: { user } } = await supabase.auth.getUser();
-        
-        if (user) {
-          const { error: roleError } = await supabase
-            .from("user_roles")
-            .insert({
-              user_id: user.id,
-              role: "buyer",
-            });
-
-          if (roleError) {
-            console.error("Error assigning buyer role:", roleError);
-          }
-        }
-      }, 1000);
-    }
   };
 
   const handleChange = (field: string, value: string | boolean) => {
