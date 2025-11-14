@@ -27,6 +27,7 @@ import KYCManagement from "./pages/admin/KYCManagement";
 import TransactionMonitoring from "./pages/admin/TransactionMonitoring";
 import Reports from "./pages/admin/Reports";
 import Settings from "./pages/admin/Settings";
+import CertificationWorkflow from "./pages/admin/CertificationWorkflow";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -61,6 +62,7 @@ const App = () => (
                 <Route path="users" element={<UserManagement />} />
                 <Route path="roles" element={<RoleManagement />} />
                 <Route path="projects" element={<ProjectManagement />} />
+                <Route path="certification" element={<CertificationWorkflow />} />
                 <Route path="kyc" element={<KYCManagement />} />
                 <Route path="transactions" element={<TransactionMonitoring />} />
                 <Route path="reports" element={<Reports />} />

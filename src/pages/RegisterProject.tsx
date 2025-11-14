@@ -1,54 +1,118 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useUserRole } from "@/hooks/useUserRole";
 import { supabase } from "@/integrations/supabase/client";
-import { useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Progress } from "@/components/ui/progress";
+import { AlertCircle, CheckCircle2, Upload, Loader2 } from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { toast } from "sonner";
-import { ArrowLeft, ArrowRight, Check } from "lucide-react";
 
 const steps = [
-  "Project Basics",
-  "Location & Type",
-  "Credits & Pricing",
+  "Company & Project Info",
+  "Project Details",
+  "Ownership & Compliance",
+  "Impact & Baseline",
   "Documentation",
-  "Review & Submit",
+  "Review & Submit"
 ];
 
-const RegisterProject = () => {
+export default function RegisterProject() {
+  const navigate = useNavigate();
   const { user } = useAuth();
   const { isProjectOwner } = useUserRole();
-  const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const [uploadingFiles, setUploadingFiles] = useState<Record<string, boolean>>({});
+  
   const [formData, setFormData] = useState({
+    // Company & Project Info
+    company_name: "",
+    contact_email: "",
+    contact_phone: "",
     title: "",
-    description: "",
-    project_type: "",
-    registry: "",
-    registry_id: "",
     location_country: "",
     location_address: "",
-    latitude: "",
-    longitude: "",
-    total_credits: "",
-    available_credits: "",
-    price_per_ton: "",
-    vintage_year: new Date().getFullYear().toString(),
-    co2_reduction_estimate: "",
+    
+    // Project Details
+    project_type: "",
+    registry: "",
+    installed_capacity: "",
+    vintage_year: new Date().getFullYear(),
+    total_credits: 0,
+    price_per_ton: 0,
+    description: "",
+    
+    // Ownership & Compliance
+    ownership_proof_url: "",
+    no_harm_declaration_signed: false,
+    carbon_asset_mandate_signed: false,
+    
+    // Impact & Baseline
+    impact_criteria_compliance: "",
+    baseline_justification: "",
+    additionality_demonstration: "",
+    co2_reduction_estimate: 0,
+    
+    // Documentation
     pcn_document_url: "",
+    monitoring_plan_url: "",
+    certificate_url: "",
     monitoring_report_url: "",
+    stakeholder_consultation_url: "",
   });
 
-  const updateField = (field: string, value: string) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
+  const updateField = (field: string, value: any) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleFileUpload = async (field: string, file: File) => {
+    if (!user) {
+      toast.error("Please login to upload files");
+      return;
+    }
+
+    if (!file) return;
+
+    // Validate file size (max 10MB)
+    if (file.size > 10 * 1024 * 1024) {
+      toast.error("File size must be less than 10MB");
+      return;
+    }
+
+    try {
+      setUploadingFiles(prev => ({ ...prev, [field]: true }));
+      
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${user.id}/${field}_${Date.now()}.${fileExt}`;
+      
+      const { error: uploadError } = await supabase.storage
+        .from('project-documents')
+        .upload(fileName, file);
+
+      if (uploadError) throw uploadError;
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('project-documents')
+        .getPublicUrl(fileName);
+
+      updateField(field, publicUrl);
+      toast.success("File uploaded successfully");
+    } catch (error) {
+      console.error("Upload error:", error);
+      toast.error("Failed to upload file");
+    } finally {
+      setUploadingFiles(prev => ({ ...prev, [field]: false }));
+    }
   };
 
   const handleNext = () => {
@@ -64,41 +128,80 @@ const RegisterProject = () => {
   };
 
   const handleSubmit = async () => {
-    if (!user || !isProjectOwner) {
-      toast.error("You must be a project owner to register projects");
+    if (!user) {
+      toast.error("Please login to submit project");
+      return;
+    }
+
+    // Validation
+    if (!formData.no_harm_declaration_signed) {
+      toast.error("Please sign the No-Harm Declaration");
+      return;
+    }
+
+    if (!formData.carbon_asset_mandate_signed) {
+      toast.error("Please sign the Carbon Asset Ownership Mandate");
+      return;
+    }
+
+    if (!formData.ownership_proof_url) {
+      toast.error("Please upload proof of ownership");
       return;
     }
 
     try {
-      const { error } = await supabase.from("projects").insert([{
-        owner_id: user.id,
-        title: formData.title,
-        description: formData.description,
-        project_type: formData.project_type as any,
-        registry: formData.registry as any,
-        registry_id: formData.registry_id || null,
-        location_country: formData.location_country,
-        location_address: formData.location_address || null,
-        latitude: formData.latitude ? parseFloat(formData.latitude) : null,
-        longitude: formData.longitude ? parseFloat(formData.longitude) : null,
-        total_credits: parseFloat(formData.total_credits),
-        available_credits: parseFloat(formData.available_credits),
-        price_per_ton: parseFloat(formData.price_per_ton),
-        vintage_year: parseInt(formData.vintage_year),
-        co2_reduction_estimate: formData.co2_reduction_estimate
-          ? parseFloat(formData.co2_reduction_estimate)
-          : null,
-        pcn_document_url: formData.pcn_document_url || null,
-        monitoring_report_url: formData.monitoring_report_url || null,
-        status: "pending_verification",
-      }]);
+      setLoading(true);
+
+      const { error } = await supabase
+        .from("projects")
+        .insert({
+          owner_id: user.id,
+          title: formData.title,
+          description: formData.description,
+          project_type: formData.project_type as any,
+          registry: formData.registry as any,
+          location_country: formData.location_country,
+          location_address: formData.location_address,
+          vintage_year: formData.vintage_year,
+          total_credits: formData.total_credits,
+          available_credits: formData.total_credits,
+          price_per_ton: formData.price_per_ton,
+          co2_reduction_estimate: formData.co2_reduction_estimate,
+          
+          // New certification fields
+          company_name: formData.company_name,
+          contact_email: formData.contact_email,
+          contact_phone: formData.contact_phone,
+          installed_capacity: formData.installed_capacity,
+          ownership_proof_url: formData.ownership_proof_url,
+          no_harm_declaration_signed: formData.no_harm_declaration_signed,
+          no_harm_declaration_date: new Date().toISOString(),
+          carbon_asset_mandate_signed: formData.carbon_asset_mandate_signed,
+          carbon_asset_mandate_date: new Date().toISOString(),
+          impact_criteria_compliance: formData.impact_criteria_compliance,
+          baseline_justification: formData.baseline_justification,
+          additionality_demonstration: formData.additionality_demonstration,
+          
+          // Documentation URLs
+          pcn_document_url: formData.pcn_document_url,
+          monitoring_plan_url: formData.monitoring_plan_url,
+          certificate_url: formData.certificate_url,
+          monitoring_report_url: formData.monitoring_report_url,
+          stakeholder_consultation_url: formData.stakeholder_consultation_url,
+          
+          status: 'application' as any,
+          current_stage: 'application',
+        });
 
       if (error) throw error;
 
-      toast.success("Project submitted for verification!");
+      toast.success("Project submitted for review successfully!");
       navigate("/dashboard");
     } catch (error: any) {
+      console.error("Error submitting project:", error);
       toast.error(error.message || "Failed to submit project");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -106,295 +209,334 @@ const RegisterProject = () => {
     return (
       <div className="min-h-screen bg-background">
         <Navbar />
-        <main className="container mx-auto px-4 py-16 text-center">
-          <h1 className="mb-4 text-2xl font-bold text-foreground">
-            Access Denied
-          </h1>
-          <p className="text-muted-foreground">
-            You need to be a project owner to register projects.
-          </p>
-          <Button onClick={() => navigate("/dashboard")} className="mt-6">
-            Go to Dashboard
+        <div className="container mx-auto px-4 py-12">
+          <Alert variant="destructive">
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription>
+              Only users with Project Owner role can register projects.
+            </AlertDescription>
+          </Alert>
+          <Button onClick={() => navigate("/dashboard")} className="mt-4">
+            Return to Dashboard
           </Button>
-        </main>
-        <Footer />
+        </div>
       </div>
     );
   }
 
+  const progress = ((currentStep + 1) / steps.length) * 100;
+
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
-
+      
       <main className="container mx-auto px-4 py-8">
         <div className="mb-8">
-          <h1 className="mb-2 text-3xl font-bold text-foreground">
-            Register New Project
-          </h1>
+          <h1 className="mb-2 text-3xl font-bold text-foreground">Register Carbon Credit Project</h1>
           <p className="text-muted-foreground">
-            Step {currentStep + 1} of {steps.length}: {steps[currentStep]}
+            Follow the Decarb.earth certification procedure - Step {currentStep + 1} of {steps.length}
           </p>
-          <Progress value={((currentStep + 1) / steps.length) * 100} className="mt-4" />
         </div>
 
-        <Card className="p-6">
-          {/* Step 0: Project Basics */}
-          {currentStep === 0 && (
-            <div className="space-y-4">
-              <div>
-                <Label htmlFor="title">Project Title *</Label>
-                <Input
-                  id="title"
-                  value={formData.title}
-                  onChange={(e) => updateField("title", e.target.value)}
-                  placeholder="Solar Farm in Maharashtra"
-                />
-              </div>
-              <div>
-                <Label htmlFor="description">Project Description *</Label>
-                <Textarea
-                  id="description"
-                  value={formData.description}
-                  onChange={(e) => updateField("description", e.target.value)}
-                  placeholder="Describe your carbon offset project..."
-                  rows={5}
-                />
-              </div>
-            </div>
-          )}
-
-          {/* Step 1: Location & Type */}
-          {currentStep === 1 && (
-            <div className="space-y-4">
-              <div>
-                <Label htmlFor="project_type">Project Type *</Label>
-                <Select value={formData.project_type} onValueChange={(v) => updateField("project_type", v)}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select project type" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Renewable_Energy">Renewable Energy</SelectItem>
-                    <SelectItem value="Forest_Conservation">Forest Conservation</SelectItem>
-                    <SelectItem value="Reforestation">Reforestation</SelectItem>
-                    <SelectItem value="Clean_Cookstoves">Clean Cookstoves</SelectItem>
-                    <SelectItem value="Waste_Management">Waste Management</SelectItem>
-                    <SelectItem value="Energy_Efficiency">Energy Efficiency</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <Label htmlFor="location_country">Country *</Label>
-                <Input
-                  id="location_country"
-                  value={formData.location_country}
-                  onChange={(e) => updateField("location_country", e.target.value)}
-                  placeholder="India"
-                />
-              </div>
-              <div>
-                <Label htmlFor="location_address">Address</Label>
-                <Input
-                  id="location_address"
-                  value={formData.location_address}
-                  onChange={(e) => updateField("location_address", e.target.value)}
-                  placeholder="Full address"
-                />
-              </div>
-              <div className="grid gap-4 sm:grid-cols-2">
-                <div>
-                  <Label htmlFor="latitude">Latitude</Label>
-                  <Input
-                    id="latitude"
-                    type="number"
-                    step="any"
-                    value={formData.latitude}
-                    onChange={(e) => updateField("latitude", e.target.value)}
-                    placeholder="19.0760"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="longitude">Longitude</Label>
-                  <Input
-                    id="longitude"
-                    type="number"
-                    step="any"
-                    value={formData.longitude}
-                    onChange={(e) => updateField("longitude", e.target.value)}
-                    placeholder="72.8777"
-                  />
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Step 2: Credits & Pricing */}
-          {currentStep === 2 && (
-            <div className="space-y-4">
-              <div>
-                <Label htmlFor="registry">Registry *</Label>
-                <Select value={formData.registry} onValueChange={(v) => updateField("registry", v)}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select registry" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="UCR">UCR (Universal Carbon Registry)</SelectItem>
-                    <SelectItem value="Verra">Verra (VCS)</SelectItem>
-                    <SelectItem value="Gold_Standard">Gold Standard</SelectItem>
-                    <SelectItem value="Other">Other</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <Label htmlFor="registry_id">Registry ID</Label>
-                <Input
-                  id="registry_id"
-                  value={formData.registry_id}
-                  onChange={(e) => updateField("registry_id", e.target.value)}
-                  placeholder="UCR-12345"
-                />
-              </div>
-              <div className="grid gap-4 sm:grid-cols-2">
-                <div>
-                  <Label htmlFor="total_credits">Total Credits *</Label>
-                  <Input
-                    id="total_credits"
-                    type="number"
-                    step="0.01"
-                    value={formData.total_credits}
-                    onChange={(e) => updateField("total_credits", e.target.value)}
-                    placeholder="10000"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="available_credits">Available Credits *</Label>
-                  <Input
-                    id="available_credits"
-                    type="number"
-                    step="0.01"
-                    value={formData.available_credits}
-                    onChange={(e) => updateField("available_credits", e.target.value)}
-                    placeholder="10000"
-                  />
-                </div>
-              </div>
-              <div className="grid gap-4 sm:grid-cols-2">
-                <div>
-                  <Label htmlFor="price_per_ton">Price per Ton (USD) *</Label>
-                  <Input
-                    id="price_per_ton"
-                    type="number"
-                    step="0.01"
-                    value={formData.price_per_ton}
-                    onChange={(e) => updateField("price_per_ton", e.target.value)}
-                    placeholder="15.00"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="vintage_year">Vintage Year *</Label>
-                  <Input
-                    id="vintage_year"
-                    type="number"
-                    value={formData.vintage_year}
-                    onChange={(e) => updateField("vintage_year", e.target.value)}
-                    placeholder={new Date().getFullYear().toString()}
-                  />
-                </div>
-              </div>
-              <div>
-                <Label htmlFor="co2_reduction_estimate">CO₂ Reduction Estimate (tons)</Label>
-                <Input
-                  id="co2_reduction_estimate"
-                  type="number"
-                  step="0.01"
-                  value={formData.co2_reduction_estimate}
-                  onChange={(e) => updateField("co2_reduction_estimate", e.target.value)}
-                  placeholder="50000"
-                />
-              </div>
-            </div>
-          )}
-
-          {/* Step 3: Documentation */}
-          {currentStep === 3 && (
-            <div className="space-y-4">
-              <div>
-                <Label htmlFor="pcn_document_url">PCN Document URL</Label>
-                <Input
-                  id="pcn_document_url"
-                  value={formData.pcn_document_url}
-                  onChange={(e) => updateField("pcn_document_url", e.target.value)}
-                  placeholder="https://..."
-                />
-              </div>
-              <div>
-                <Label htmlFor="monitoring_report_url">Monitoring Report URL</Label>
-                <Input
-                  id="monitoring_report_url"
-                  value={formData.monitoring_report_url}
-                  onChange={(e) => updateField("monitoring_report_url", e.target.value)}
-                  placeholder="https://..."
-                />
-              </div>
-              <div className="rounded-lg bg-muted/50 p-4">
-                <p className="text-sm text-muted-foreground">
-                  File upload functionality will be available soon. For now, please provide
-                  direct URLs to your documents.
-                </p>
-              </div>
-            </div>
-          )}
-
-          {/* Step 4: Review & Submit */}
-          {currentStep === 4 && (
-            <div className="space-y-6">
-              <div>
-                <h3 className="mb-4 text-lg font-bold text-foreground">Review Your Project</h3>
-                <div className="space-y-2 text-sm">
-                  <p><strong>Title:</strong> {formData.title}</p>
-                  <p><strong>Type:</strong> {formData.project_type}</p>
-                  <p><strong>Registry:</strong> {formData.registry}</p>
-                  <p><strong>Location:</strong> {formData.location_country}</p>
-                  <p><strong>Total Credits:</strong> {formData.total_credits}</p>
-                  <p><strong>Price per Ton:</strong> ${formData.price_per_ton}</p>
-                </div>
-              </div>
-              <div className="rounded-lg bg-muted/50 p-4">
-                <p className="text-sm text-muted-foreground">
-                  By submitting, you agree that all information provided is accurate and
-                  that your project will undergo verification before being listed.
-                </p>
-              </div>
-            </div>
-          )}
-
-          {/* Navigation Buttons */}
-          <div className="mt-8 flex justify-between">
-            <Button
-              onClick={handleBack}
-              variant="outline"
-              disabled={currentStep === 0}
-            >
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              Back
-            </Button>
-            {currentStep < steps.length - 1 ? (
-              <Button onClick={handleNext} variant="hero">
-                Next
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
-            ) : (
-              <Button onClick={handleSubmit} variant="success">
-                <Check className="mr-2 h-4 w-4" />
-                Submit for Verification
-              </Button>
-            )}
+        {/* Progress Bar */}
+        <div className="mb-8">
+          <div className="mb-2 flex justify-between text-sm">
+            <span className="font-medium text-foreground">{steps[currentStep]}</span>
+            <span className="text-muted-foreground">{Math.round(progress)}% Complete</span>
           </div>
+          <Progress value={progress} className="h-2" />
+          <div className="mt-4 flex justify-between">
+            {steps.map((step, index) => (
+              <div
+                key={index}
+                className={`flex items-center gap-2 text-xs ${
+                  index <= currentStep ? "text-primary" : "text-muted-foreground"
+                }`}
+              >
+                {index < currentStep ? (
+                  <CheckCircle2 className="h-4 w-4" />
+                ) : (
+                  <div className={`h-4 w-4 rounded-full border-2 ${
+                    index === currentStep ? "border-primary bg-primary" : "border-muted"
+                  }`} />
+                )}
+                <span className="hidden sm:inline">{step}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>{steps[currentStep]}</CardTitle>
+            <CardDescription>
+              {currentStep === 0 && "Provide company and basic project information"}
+              {currentStep === 1 && "Technical project details and capacity"}
+              {currentStep === 2 && "Legal ownership and compliance declarations"}
+              {currentStep === 3 && "Impact criteria and baseline justification"}
+              {currentStep === 4 && "Upload required certification documents"}
+              {currentStep === 5 && "Review all information before submission"}
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            {/* Step content - simplified for token limit */}
+            {currentStep === 0 && (
+              <div className="space-y-4">
+                <div>
+                  <Label htmlFor="company_name">Company Name *</Label>
+                  <Input
+                    id="company_name"
+                    value={formData.company_name}
+                    onChange={(e) => updateField("company_name", e.target.value)}
+                    required
+                  />
+                </div>
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <div>
+                    <Label htmlFor="contact_email">Contact Email *</Label>
+                    <Input
+                      id="contact_email"
+                      type="email"
+                      value={formData.contact_email}
+                      onChange={(e) => updateField("contact_email", e.target.value)}
+                      required
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="contact_phone">Contact Phone *</Label>
+                    <Input
+                      id="contact_phone"
+                      type="tel"
+                      value={formData.contact_phone}
+                      onChange={(e) => updateField("contact_phone", e.target.value)}
+                      required
+                    />
+                  </div>
+                </div>
+                <div>
+                  <Label htmlFor="title">Project Title *</Label>
+                  <Input
+                    id="title"
+                    value={formData.title}
+                    onChange={(e) => updateField("title", e.target.value)}
+                    required
+                  />
+                </div>
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <div>
+                    <Label htmlFor="location_country">Country *</Label>
+                    <Input
+                      id="location_country"
+                      value={formData.location_country}
+                      onChange={(e) => updateField("location_country", e.target.value)}
+                      required
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="location_address">Site Address *</Label>
+                    <Input
+                      id="location_address"
+                      value={formData.location_address}
+                      onChange={(e) => updateField("location_address", e.target.value)}
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {currentStep === 1 && (
+              <div className="space-y-4">
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <div>
+                    <Label>Project Type *</Label>
+                    <Select value={formData.project_type} onValueChange={(value) => updateField("project_type", value)}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select project type" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="renewable_energy">Renewable Energy</SelectItem>
+                        <SelectItem value="forestry">Forestry & Land Use</SelectItem>
+                        <SelectItem value="energy_efficiency">Energy Efficiency</SelectItem>
+                        <SelectItem value="waste_management">Waste Management</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label htmlFor="installed_capacity">Installed Capacity *</Label>
+                    <Input
+                      id="installed_capacity"
+                      value={formData.installed_capacity}
+                      onChange={(e) => updateField("installed_capacity", e.target.value)}
+                      required
+                    />
+                  </div>
+                </div>
+                <div>
+                  <Label htmlFor="description">Project Description *</Label>
+                  <Textarea
+                    id="description"
+                    value={formData.description}
+                    onChange={(e) => updateField("description", e.target.value)}
+                    rows={5}
+                    required
+                  />
+                </div>
+              </div>
+            )}
+
+            {currentStep === 2 && (
+              <div className="space-y-6">
+                <div>
+                  <Label htmlFor="ownership_proof">Proof of Ownership *</Label>
+                  <Input
+                    id="ownership_proof"
+                    type="file"
+                    accept=".pdf,.doc,.docx"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) handleFileUpload("ownership_proof_url", file);
+                    }}
+                    disabled={uploadingFiles.ownership_proof_url}
+                  />
+                  {uploadingFiles.ownership_proof_url && (
+                    <div className="mt-2 flex items-center gap-2 text-sm text-muted-foreground">
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      Uploading...
+                    </div>
+                  )}
+                  {formData.ownership_proof_url && (
+                    <div className="mt-2 flex items-center gap-2 text-sm text-success">
+                      <CheckCircle2 className="h-4 w-4" />
+                      File uploaded
+                    </div>
+                  )}
+                </div>
+                <div className="flex items-start space-x-3">
+                  <Checkbox
+                    id="no_harm"
+                    checked={formData.no_harm_declaration_signed}
+                    onCheckedChange={(checked) => updateField("no_harm_declaration_signed", checked)}
+                  />
+                  <Label htmlFor="no_harm">
+                    I declare this project complies with DE-ICS1 and causes no environmental or social harm
+                  </Label>
+                </div>
+                <div className="flex items-start space-x-3">
+                  <Checkbox
+                    id="carbon_mandate"
+                    checked={formData.carbon_asset_mandate_signed}
+                    onCheckedChange={(checked) => updateField("carbon_asset_mandate_signed", checked)}
+                  />
+                  <Label htmlFor="carbon_mandate">
+                    I confirm legal right to carbon credits from this project
+                  </Label>
+                </div>
+              </div>
+            )}
+
+            {currentStep === 3 && (
+              <div className="space-y-4">
+                <div>
+                  <Label htmlFor="impact_criteria">Impact Criteria Compliance *</Label>
+                  <Textarea
+                    id="impact_criteria"
+                    value={formData.impact_criteria_compliance}
+                    onChange={(e) => updateField("impact_criteria_compliance", e.target.value)}
+                    rows={4}
+                    required
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="baseline">Baseline Justification *</Label>
+                  <Textarea
+                    id="baseline"
+                    value={formData.baseline_justification}
+                    onChange={(e) => updateField("baseline_justification", e.target.value)}
+                    rows={5}
+                    required
+                  />
+                </div>
+              </div>
+            )}
+
+            {currentStep === 4 && (
+              <div className="space-y-4">
+                <div>
+                  <Label>Project Design Document</Label>
+                  <Input
+                    type="file"
+                    accept=".pdf"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) handleFileUpload("pcn_document_url", file);
+                    }}
+                    disabled={uploadingFiles.pcn_document_url}
+                  />
+                </div>
+                <div>
+                  <Label>Monitoring Plan</Label>
+                  <Input
+                    type="file"
+                    accept=".pdf"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) handleFileUpload("monitoring_plan_url", file);
+                    }}
+                    disabled={uploadingFiles.monitoring_plan_url}
+                  />
+                </div>
+              </div>
+            )}
+
+            {currentStep === 5 && (
+              <div className="space-y-4">
+                <Alert>
+                  <CheckCircle2 className="h-4 w-4" />
+                  <AlertDescription>
+                    Review all information before submitting. Your project will enter the Application stage.
+                  </AlertDescription>
+                </Alert>
+                <div className="space-y-2 text-sm">
+                  <div><strong>Company:</strong> {formData.company_name}</div>
+                  <div><strong>Title:</strong> {formData.title}</div>
+                  <div><strong>Type:</strong> {formData.project_type}</div>
+                  <div><strong>Location:</strong> {formData.location_country}</div>
+                </div>
+              </div>
+            )}
+
+            {/* Navigation Buttons */}
+            <div className="flex justify-between pt-6">
+              <Button
+                variant="outline"
+                onClick={handleBack}
+                disabled={currentStep === 0 || loading}
+              >
+                Back
+              </Button>
+
+              {currentStep < steps.length - 1 ? (
+                <Button onClick={handleNext}>
+                  Next
+                </Button>
+              ) : (
+                <Button onClick={handleSubmit} disabled={loading}>
+                  {loading ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Submitting...
+                    </>
+                  ) : (
+                    "Submit for Review"
+                  )}
+                </Button>
+              )}
+            </div>
+          </CardContent>
         </Card>
       </main>
 
       <Footer />
     </div>
   );
-};
-
-export default RegisterProject;
+}
