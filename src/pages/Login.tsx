@@ -139,12 +139,18 @@ const Login = () => {
 
         <Separator className="my-6" />
 
-        <p className="text-center text-sm text-muted-foreground">
-          Don't have an account?{" "}
-          <Link to="/signup" className="font-medium text-primary hover:underline">
-            Sign up
-          </Link>
-        </p>
+        <div className="space-y-3 text-center text-sm text-muted-foreground">
+          <p>
+            Don't have an account?{" "}
+            <Link to="/signup" className="font-medium text-primary hover:underline">
+              Sign up as buyer
+            </Link>
+            {" or "}
+            <Link to="/signup/project-owner" className="font-medium text-primary hover:underline">
+              register as project owner
+            </Link>
+          </p>
+        </div>
 
       </Card>
     </div>

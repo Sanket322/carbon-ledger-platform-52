@@ -12,6 +12,7 @@ import About from "./pages/About";
 import HowItWorks from "./pages/HowItWorks";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
+import ProjectOwnerSignup from "./pages/ProjectOwnerSignup";
 import Dashboard from "./pages/Dashboard";
 import Wallet from "./pages/Wallet";
 import RegisterProject from "./pages/RegisterProject";
@@ -46,8 +47,9 @@ const App = () => (
             <Route path="/about" element={<About />} />
             <Route path="/how-it-works" element={<HowItWorks />} />
             <Route path="/knowledge" element={<Knowledge />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/signup" element={<Signup />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/signup/project-owner" element={<ProjectOwnerSignup />} />
             
             {/* Protected Routes */}
               <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
