@@ -101,7 +101,15 @@ const Dashboard = () => {
         <Card className="mb-8 p-6">
           <h2 className="mb-4 text-xl font-bold text-foreground">Quick Actions</h2>
           <div className="flex flex-wrap gap-4">
-            <Button asChild variant="hero">
+            {isProjectOwner && (
+              <Button asChild variant="hero">
+                <Link to="/register-project">
+                  <Plus className="mr-2 h-4 w-4" />
+                  Register New Project
+                </Link>
+              </Button>
+            )}
+            <Button asChild variant={isProjectOwner ? "outline-primary" : "hero"}>
               <Link to="/marketplace">
                 <ShoppingCart className="mr-2 h-4 w-4" />
                 Browse Marketplace
