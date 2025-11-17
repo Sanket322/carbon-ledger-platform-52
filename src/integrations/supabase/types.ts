@@ -91,24 +91,39 @@ export type Database = {
       }
       projects: {
         Row: {
+          additionality_demonstration: string | null
           available_credits: number
+          baseline_justification: string | null
+          carbon_asset_mandate_date: string | null
+          carbon_asset_mandate_signed: boolean | null
           certificate_url: string | null
           co2_reduction_estimate: number | null
+          company_name: string | null
+          contact_email: string | null
+          contact_phone: string | null
           created_at: string
+          current_stage: string | null
           description: string
           id: string
           images: string[] | null
+          impact_criteria_compliance: string | null
+          installed_capacity: string | null
           latitude: number | null
           location_address: string | null
           location_country: string
           longitude: number | null
+          monitoring_plan_url: string | null
           monitoring_report_url: string | null
+          no_harm_declaration_date: string | null
+          no_harm_declaration_signed: boolean | null
           owner_id: string
+          ownership_proof_url: string | null
           pcn_document_url: string | null
           price_per_ton: number
           project_type: Database["public"]["Enums"]["project_type"]
           registry: Database["public"]["Enums"]["registry_type"]
           registry_id: string | null
+          stakeholder_consultation_url: string | null
           status: Database["public"]["Enums"]["project_status"]
           title: string
           total_credits: number
@@ -119,24 +134,39 @@ export type Database = {
           vintage_year: number | null
         }
         Insert: {
+          additionality_demonstration?: string | null
           available_credits?: number
+          baseline_justification?: string | null
+          carbon_asset_mandate_date?: string | null
+          carbon_asset_mandate_signed?: boolean | null
           certificate_url?: string | null
           co2_reduction_estimate?: number | null
+          company_name?: string | null
+          contact_email?: string | null
+          contact_phone?: string | null
           created_at?: string
+          current_stage?: string | null
           description: string
           id?: string
           images?: string[] | null
+          impact_criteria_compliance?: string | null
+          installed_capacity?: string | null
           latitude?: number | null
           location_address?: string | null
           location_country: string
           longitude?: number | null
+          monitoring_plan_url?: string | null
           monitoring_report_url?: string | null
+          no_harm_declaration_date?: string | null
+          no_harm_declaration_signed?: boolean | null
           owner_id: string
+          ownership_proof_url?: string | null
           pcn_document_url?: string | null
           price_per_ton: number
           project_type: Database["public"]["Enums"]["project_type"]
           registry: Database["public"]["Enums"]["registry_type"]
           registry_id?: string | null
+          stakeholder_consultation_url?: string | null
           status?: Database["public"]["Enums"]["project_status"]
           title: string
           total_credits?: number
@@ -147,24 +177,39 @@ export type Database = {
           vintage_year?: number | null
         }
         Update: {
+          additionality_demonstration?: string | null
           available_credits?: number
+          baseline_justification?: string | null
+          carbon_asset_mandate_date?: string | null
+          carbon_asset_mandate_signed?: boolean | null
           certificate_url?: string | null
           co2_reduction_estimate?: number | null
+          company_name?: string | null
+          contact_email?: string | null
+          contact_phone?: string | null
           created_at?: string
+          current_stage?: string | null
           description?: string
           id?: string
           images?: string[] | null
+          impact_criteria_compliance?: string | null
+          installed_capacity?: string | null
           latitude?: number | null
           location_address?: string | null
           location_country?: string
           longitude?: number | null
+          monitoring_plan_url?: string | null
           monitoring_report_url?: string | null
+          no_harm_declaration_date?: string | null
+          no_harm_declaration_signed?: boolean | null
           owner_id?: string
+          ownership_proof_url?: string | null
           pcn_document_url?: string | null
           price_per_ton?: number
           project_type?: Database["public"]["Enums"]["project_type"]
           registry?: Database["public"]["Enums"]["registry_type"]
           registry_id?: string | null
+          stakeholder_consultation_url?: string | null
           status?: Database["public"]["Enums"]["project_status"]
           title?: string
           total_credits?: number
@@ -343,6 +388,12 @@ export type Database = {
         | "rejected"
         | "active"
         | "completed"
+        | "application"
+        | "registration"
+        | "pre_validation"
+        | "validation"
+        | "monitoring"
+        | "audited"
       project_type:
         | "Renewable_Energy"
         | "Forest_Conservation"
@@ -487,6 +538,12 @@ export const Constants = {
         "rejected",
         "active",
         "completed",
+        "application",
+        "registration",
+        "pre_validation",
+        "validation",
+        "monitoring",
+        "audited",
       ],
       project_type: [
         "Renewable_Energy",
