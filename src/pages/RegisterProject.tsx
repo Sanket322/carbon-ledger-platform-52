@@ -44,8 +44,8 @@ export default function RegisterProject() {
     location_address: "",
     
     // Project Details
-    project_type: "",
-    registry: "",
+    project_type: "Renewable_Energy",
+    registry: "UCR",
     installed_capacity: "",
     vintage_year: new Date().getFullYear(),
     total_credits: 0,
@@ -133,9 +133,19 @@ export default function RegisterProject() {
       return;
     }
 
-    // Only validate title - all other fields are optional
-    if (!formData.title) {
+    // Validate required database fields
+    if (!formData.title.trim()) {
       toast.error("Project title is required");
+      return;
+    }
+    
+    if (!formData.description.trim()) {
+      toast.error("Project description is required");
+      return;
+    }
+    
+    if (!formData.location_country.trim()) {
+      toast.error("Country is required");
       return;
     }
 
@@ -311,11 +321,12 @@ export default function RegisterProject() {
                 </div>
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div>
-                    <Label htmlFor="location_country">Country</Label>
+                    <Label htmlFor="location_country">Country *</Label>
                     <Input
                       id="location_country"
                       value={formData.location_country}
                       onChange={(e) => updateField("location_country", e.target.value)}
+                      placeholder="Enter country"
                     />
                   </div>
                   <div>
@@ -324,6 +335,7 @@ export default function RegisterProject() {
                       id="location_address"
                       value={formData.location_address}
                       onChange={(e) => updateField("location_address", e.target.value)}
+                      placeholder="Enter site address"
                     />
                   </div>
                 </div>
@@ -334,35 +346,53 @@ export default function RegisterProject() {
               <div className="space-y-4">
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div>
-                    <Label>Project Type</Label>
+                    <Label>Project Type *</Label>
                     <Select value={formData.project_type} onValueChange={(value) => updateField("project_type", value)}>
                       <SelectTrigger>
                         <SelectValue placeholder="Select project type" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="renewable_energy">Renewable Energy</SelectItem>
-                        <SelectItem value="forestry">Forestry & Land Use</SelectItem>
-                        <SelectItem value="energy_efficiency">Energy Efficiency</SelectItem>
-                        <SelectItem value="waste_management">Waste Management</SelectItem>
+                        <SelectItem value="Renewable_Energy">Renewable Energy</SelectItem>
+                        <SelectItem value="Forest_Conservation">Forest Conservation</SelectItem>
+                        <SelectItem value="Reforestation">Reforestation</SelectItem>
+                        <SelectItem value="Clean_Cookstoves">Clean Cookstoves</SelectItem>
+                        <SelectItem value="Waste_Management">Waste Management</SelectItem>
+                        <SelectItem value="Energy_Efficiency">Energy Efficiency</SelectItem>
+                        <SelectItem value="Other">Other</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
                   <div>
-                    <Label htmlFor="installed_capacity">Installed Capacity</Label>
-                    <Input
-                      id="installed_capacity"
-                      value={formData.installed_capacity}
-                      onChange={(e) => updateField("installed_capacity", e.target.value)}
-                    />
+                    <Label>Registry *</Label>
+                    <Select value={formData.registry} onValueChange={(value) => updateField("registry", value)}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select registry" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="UCR">UCR</SelectItem>
+                        <SelectItem value="Verra">Verra</SelectItem>
+                        <SelectItem value="Gold_Standard">Gold Standard</SelectItem>
+                        <SelectItem value="Other">Other</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
                 </div>
                 <div>
-                  <Label htmlFor="description">Project Description</Label>
+                  <Label htmlFor="installed_capacity">Installed Capacity</Label>
+                  <Input
+                    id="installed_capacity"
+                    value={formData.installed_capacity}
+                    onChange={(e) => updateField("installed_capacity", e.target.value)}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="description">Project Description *</Label>
                   <Textarea
                     id="description"
                     value={formData.description}
                     onChange={(e) => updateField("description", e.target.value)}
                     rows={5}
+                    placeholder="Describe your carbon credit project..."
                   />
                 </div>
               </div>
@@ -479,10 +509,12 @@ export default function RegisterProject() {
                   </AlertDescription>
                 </Alert>
                 <div className="space-y-2 text-sm">
-                  <div><strong>Company:</strong> {formData.company_name}</div>
+                  <div><strong>Company:</strong> {formData.company_name || "Not provided"}</div>
                   <div><strong>Title:</strong> {formData.title}</div>
-                  <div><strong>Type:</strong> {formData.project_type}</div>
+                  <div><strong>Type:</strong> {formData.project_type.replace(/_/g, " ")}</div>
+                  <div><strong>Registry:</strong> {formData.registry.replace(/_/g, " ")}</div>
                   <div><strong>Location:</strong> {formData.location_country}</div>
+                  <div><strong>Description:</strong> {formData.description.substring(0, 100)}{formData.description.length > 100 ? "..." : ""}</div>
                 </div>
               </div>
             )}
