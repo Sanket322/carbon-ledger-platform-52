@@ -61,6 +61,65 @@ const Wallet = () => {
     setCertificates(data || []);
   };
 
+  const handleDeposit = async () => {
+    const amount = parseFloat(depositAmount);
+    if (!amount || amount <= 0) {
+      toast.error("Please enter a valid amount");
+      return;
+    }
+
+    try {
+      // Update wallet balance (Demo mode - no actual payment)
+      const { error } = await supabase
+        .from("wallets")
+        .update({
+          balance: (wallet?.balance || 0) + amount,
+        })
+        .eq("user_id", user?.id);
+
+      if (error) throw error;
+
+      toast.success(`Successfully added ${formatINR(amount)} to your wallet`);
+      setDepositAmount("");
+      fetchWalletData();
+    } catch (error) {
+      console.error("Error depositing funds:", error);
+      toast.error("Failed to add funds");
+    }
+  };
+
+  const handleWithdraw = async () => {
+    const amount = parseFloat(withdrawAmount);
+    if (!amount || amount <= 0) {
+      toast.error("Please enter a valid amount");
+      return;
+    }
+
+    if (wallet && amount > wallet.balance) {
+      toast.error("Insufficient balance");
+      return;
+    }
+
+    try {
+      // Update wallet balance
+      const { error } = await supabase
+        .from("wallets")
+        .update({
+          balance: wallet.balance - amount,
+        })
+        .eq("user_id", user?.id);
+
+      if (error) throw error;
+
+      toast.success(`Successfully withdrew ${formatINR(amount)}`);
+      setWithdrawAmount("");
+      fetchWalletData();
+    } catch (error) {
+      console.error("Error withdrawing funds:", error);
+      toast.error("Failed to withdraw funds");
+    }
+  };
+
   const handleRetireCredits = async () => {
     const amount = parseFloat(retireAmount);
     if (!amount || amount <= 0) {
@@ -112,33 +171,6 @@ const Wallet = () => {
       toast.error("Failed to retire credits");
       console.error(error);
     }
-  };
-
-  const handleDeposit = async () => {
-    const amount = parseFloat(depositAmount);
-    if (!amount || amount <= 0) {
-      toast.error("Please enter a valid amount");
-      return;
-    }
-
-    toast.info("Payment integration coming soon!");
-    setDepositAmount("");
-  };
-
-  const handleWithdraw = async () => {
-    const amount = parseFloat(withdrawAmount);
-    if (!amount || amount <= 0) {
-      toast.error("Please enter a valid amount");
-      return;
-    }
-
-    if (wallet && amount > wallet.balance) {
-      toast.error("Insufficient balance");
-      return;
-    }
-
-    toast.info("Withdrawal processing will be available soon");
-    setWithdrawAmount("");
   };
 
   return (
