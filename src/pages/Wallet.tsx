@@ -383,8 +383,7 @@ const Wallet = () => {
           </DialogContent>
         </Dialog>
       </div>
-    </div>
-  );
+    );
 };
 
 export default Wallet;
