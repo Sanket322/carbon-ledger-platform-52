@@ -133,18 +133,11 @@ export default function RegisterProject() {
       return;
     }
 
-    // Validation
-    if (!formData.no_harm_declaration_signed) {
-      toast.error("Please sign the No-Harm Declaration");
+    // Only validate title - all other fields are optional
+    if (!formData.title) {
+      toast.error("Project title is required");
       return;
     }
-
-    if (!formData.carbon_asset_mandate_signed) {
-      toast.error("Please sign the Carbon Asset Ownership Mandate");
-      return;
-    }
-
-    // Ownership proof is now optional
 
     try {
       setLoading(true);
@@ -280,33 +273,30 @@ export default function RegisterProject() {
             {currentStep === 0 && (
               <div className="space-y-4">
                 <div>
-                  <Label htmlFor="company_name">Company Name *</Label>
+                  <Label htmlFor="company_name">Company Name</Label>
                   <Input
                     id="company_name"
                     value={formData.company_name}
                     onChange={(e) => updateField("company_name", e.target.value)}
-                    required
                   />
                 </div>
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div>
-                    <Label htmlFor="contact_email">Contact Email *</Label>
+                    <Label htmlFor="contact_email">Contact Email</Label>
                     <Input
                       id="contact_email"
                       type="email"
                       value={formData.contact_email}
                       onChange={(e) => updateField("contact_email", e.target.value)}
-                      required
                     />
                   </div>
                   <div>
-                    <Label htmlFor="contact_phone">Contact Phone *</Label>
+                    <Label htmlFor="contact_phone">Contact Phone</Label>
                     <Input
                       id="contact_phone"
                       type="tel"
                       value={formData.contact_phone}
                       onChange={(e) => updateField("contact_phone", e.target.value)}
-                      required
                     />
                   </div>
                 </div>
@@ -321,16 +311,15 @@ export default function RegisterProject() {
                 </div>
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div>
-                    <Label htmlFor="location_country">Country *</Label>
+                    <Label htmlFor="location_country">Country</Label>
                     <Input
                       id="location_country"
                       value={formData.location_country}
                       onChange={(e) => updateField("location_country", e.target.value)}
-                      required
                     />
                   </div>
                   <div>
-                    <Label htmlFor="location_address">Site Address *</Label>
+                    <Label htmlFor="location_address">Site Address</Label>
                     <Input
                       id="location_address"
                       value={formData.location_address}
@@ -345,7 +334,7 @@ export default function RegisterProject() {
               <div className="space-y-4">
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div>
-                    <Label>Project Type *</Label>
+                    <Label>Project Type</Label>
                     <Select value={formData.project_type} onValueChange={(value) => updateField("project_type", value)}>
                       <SelectTrigger>
                         <SelectValue placeholder="Select project type" />
@@ -359,23 +348,21 @@ export default function RegisterProject() {
                     </Select>
                   </div>
                   <div>
-                    <Label htmlFor="installed_capacity">Installed Capacity *</Label>
+                    <Label htmlFor="installed_capacity">Installed Capacity</Label>
                     <Input
                       id="installed_capacity"
                       value={formData.installed_capacity}
                       onChange={(e) => updateField("installed_capacity", e.target.value)}
-                      required
                     />
                   </div>
                 </div>
                 <div>
-                  <Label htmlFor="description">Project Description *</Label>
+                  <Label htmlFor="description">Project Description</Label>
                   <Textarea
                     id="description"
                     value={formData.description}
                     onChange={(e) => updateField("description", e.target.value)}
                     rows={5}
-                    required
                   />
                 </div>
               </div>
@@ -434,23 +421,21 @@ export default function RegisterProject() {
             {currentStep === 3 && (
               <div className="space-y-4">
                 <div>
-                  <Label htmlFor="impact_criteria">Impact Criteria Compliance *</Label>
+                  <Label htmlFor="impact_criteria">Impact Criteria Compliance</Label>
                   <Textarea
                     id="impact_criteria"
                     value={formData.impact_criteria_compliance}
                     onChange={(e) => updateField("impact_criteria_compliance", e.target.value)}
                     rows={4}
-                    required
                   />
                 </div>
                 <div>
-                  <Label htmlFor="baseline">Baseline Justification *</Label>
+                  <Label htmlFor="baseline">Baseline Justification</Label>
                   <Textarea
                     id="baseline"
                     value={formData.baseline_justification}
                     onChange={(e) => updateField("baseline_justification", e.target.value)}
                     rows={5}
-                    required
                   />
                 </div>
               </div>
