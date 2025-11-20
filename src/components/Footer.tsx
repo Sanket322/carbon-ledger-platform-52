@@ -40,6 +40,16 @@ const Footer = () => {
                   About Us
                 </Link>
               </li>
+              <li>
+                <Link to="/documentation" className="text-muted-foreground hover:text-primary">
+                  Documentation
+                </Link>
+              </li>
+              <li>
+                <Link to="/faq" className="text-muted-foreground hover:text-primary">
+                  FAQ
+                </Link>
+              </li>
             </ul>
           </div>
 
@@ -63,14 +73,24 @@ const Footer = () => {
             <h3 className="mb-4 font-semibold text-foreground">Legal</h3>
             <ul className="space-y-2 text-sm">
               <li>
-                <a href="#" className="text-muted-foreground hover:text-primary">
-                  Privacy Policy
-                </a>
+                <Link to="/legal/terms" className="text-muted-foreground hover:text-primary">
+                  Terms & Conditions
+                </Link>
               </li>
               <li>
-                <a href="#" className="text-muted-foreground hover:text-primary">
-                  Terms of Service
-                </a>
+                <Link to="/legal/privacy" className="text-muted-foreground hover:text-primary">
+                  Privacy Policy
+                </Link>
+              </li>
+              <li>
+                <Link to="/legal/refund" className="text-muted-foreground hover:text-primary">
+                  Refund Policy
+                </Link>
+              </li>
+              <li>
+                <Link to="/legal/disclaimer" className="text-muted-foreground hover:text-primary">
+                  Disclaimer
+                </Link>
               </li>
             </ul>
           </div>

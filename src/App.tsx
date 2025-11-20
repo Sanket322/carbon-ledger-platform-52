@@ -31,6 +31,12 @@ import Settings from "./pages/admin/Settings";
 import CertificationWorkflow from "./pages/admin/CertificationWorkflow";
 import NotFound from "./pages/NotFound";
 import EnergyDashboard from "./pages/EnergyDashboard";
+import FAQ from "./pages/FAQ";
+import Documentation from "./pages/Documentation";
+import Terms from "./pages/legal/Terms";
+import Privacy from "./pages/legal/Privacy";
+import Refund from "./pages/legal/Refund";
+import Disclaimer from "./pages/legal/Disclaimer";
 
 const queryClient = new QueryClient();
 
@@ -59,6 +65,12 @@ const App = () => (
               <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
               <Route path="/purchase/:id" element={<ProtectedRoute><PurchaseProject /></ProtectedRoute>} />
               <Route path="/energy" element={<ProtectedRoute><EnergyDashboard /></ProtectedRoute>} />
+              <Route path="/faq" element={<FAQ />} />
+              <Route path="/documentation" element={<Documentation />} />
+              <Route path="/legal/terms" element={<Terms />} />
+              <Route path="/legal/privacy" element={<Privacy />} />
+              <Route path="/legal/refund" element={<Refund />} />
+              <Route path="/legal/disclaimer" element={<Disclaimer />} />
               
               {/* Admin Routes */}
               <Route path="/admin" element={<ProtectedRoute><AdminLayout /></ProtectedRoute>}>
