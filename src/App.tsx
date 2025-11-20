@@ -30,6 +30,7 @@ import Reports from "./pages/admin/Reports";
 import Settings from "./pages/admin/Settings";
 import CertificationWorkflow from "./pages/admin/CertificationWorkflow";
 import NotFound from "./pages/NotFound";
+import EnergyDashboard from "./pages/EnergyDashboard";
 
 const queryClient = new QueryClient();
 
@@ -57,6 +58,7 @@ const App = () => (
               <Route path="/register-project" element={<ProtectedRoute><RegisterProject /></ProtectedRoute>} />
               <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
               <Route path="/purchase/:id" element={<ProtectedRoute><PurchaseProject /></ProtectedRoute>} />
+              <Route path="/energy" element={<ProtectedRoute><EnergyDashboard /></ProtectedRoute>} />
               
               {/* Admin Routes */}
               <Route path="/admin" element={<ProtectedRoute><AdminLayout /></ProtectedRoute>}>
