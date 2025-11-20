@@ -3,6 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { MapPin, TrendingUp, Shield } from "lucide-react";
 import { Link } from "react-router-dom";
+import { formatCreditPrice } from "@/utils/currency";
 
 interface ProjectCardProps {
   id: string;
@@ -65,7 +66,7 @@ const ProjectCard = ({
         <div className="mb-4 flex items-center justify-between rounded-lg bg-muted/50 p-3">
           <div>
             <p className="text-xs text-muted-foreground">Price per ton</p>
-            <p className="text-xl font-bold text-foreground">${pricePerTon}</p>
+            <p className="text-xl font-bold text-foreground">{formatCreditPrice(pricePerTon)}</p>
           </div>
           <div className="text-right">
             <p className="text-xs text-muted-foreground">Available</p>

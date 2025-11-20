@@ -1,175 +1,209 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import ProjectCard from "@/components/ProjectCard";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Search, SlidersHorizontal } from "lucide-react";
+import { Search, SlidersHorizontal, Loader2 } from "lucide-react";
+import { toast } from "sonner";
+import { formatCreditPrice } from "@/utils/currency";
 import projectSolar from "@/assets/project-solar.jpg";
 import projectForest from "@/assets/project-forest.jpg";
 import projectWind from "@/assets/project-wind.jpg";
 
+interface Project {
+  id: string;
+  title: string;
+  project_type: string;
+  location_country: string;
+  registry: string;
+  price_per_ton: number;
+  available_credits: number;
+  status: string;
+  description: string;
+}
+
 const Marketplace = () => {
   const [searchQuery, setSearchQuery] = useState("");
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedType, setSelectedType] = useState<string | null>(null);
+  const [selectedRegistry, setSelectedRegistry] = useState<string | null>(null);
 
-  const projects = [
-    {
-      id: "1",
-      name: "Amazon Rainforest Conservation REDD+ Project",
-      type: "Forestry & Land Use",
-      location: "Brazil",
-      registry: "Verra VCS",
-      pricePerTon: 12.5,
-      availableCredits: 45000,
-      image: projectForest,
-      verified: true,
-    },
-    {
-      id: "2",
-      name: "India Solar Power Generation Initiative",
-      type: "Renewable Energy",
-      location: "Rajasthan, India",
-      registry: "Gold Standard",
-      pricePerTon: 8.75,
-      availableCredits: 78500,
-      image: projectSolar,
-      verified: true,
-    },
-    {
-      id: "3",
-      name: "European Wind Farm Development",
-      type: "Renewable Energy",
-      location: "Scotland, UK",
-      registry: "UCR",
-      pricePerTon: 10.0,
-      availableCredits: 52000,
-      image: projectWind,
-      verified: true,
-    },
-    {
-      id: "4",
-      name: "Southeast Asian Mangrove Restoration",
-      type: "Forestry & Land Use",
-      location: "Indonesia",
-      registry: "Verra VCS",
-      pricePerTon: 15.25,
-      availableCredits: 28000,
-      image: projectForest,
-      verified: true,
-    },
-    {
-      id: "5",
-      name: "California Solar Energy Project",
-      type: "Renewable Energy",
-      location: "California, USA",
-      registry: "Gold Standard",
-      pricePerTon: 9.5,
-      availableCredits: 65000,
-      image: projectSolar,
-      verified: true,
-    },
-    {
-      id: "6",
-      name: "Nordic Offshore Wind Development",
-      type: "Renewable Energy",
-      location: "Norway",
-      registry: "UCR",
-      pricePerTon: 11.25,
-      availableCredits: 42000,
-      image: projectWind,
-      verified: true,
-    },
-  ];
+  useEffect(() => {
+    fetchProjects();
+  }, []);
 
-  const projectTypes = ["All Projects", "Renewable Energy", "Forestry & Land Use", "Energy Efficiency", "Waste Management"];
-  const registries = ["All Registries", "UCR", "Verra VCS", "Gold Standard"];
+  const fetchProjects = async () => {
+    try {
+      const { data, error } = await supabase
+        .from("projects")
+        .select("*")
+        .in("status", ["active", "verified"])
+        .order("created_at", { ascending: false });
+
+      if (error) throw error;
+
+      setProjects(data || []);
+    } catch (error: any) {
+      console.error("Error fetching projects:", error);
+      toast.error("Failed to load projects");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getProjectImage = (type: string) => {
+    if (type.includes("Forest") || type.includes("Reforestation")) return projectForest;
+    if (type.includes("Wind")) return projectWind;
+    return projectSolar;
+  };
+
+  const filteredProjects = projects.filter((project) => {
+    const matchesSearch = 
+      project.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      project.location_country.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      project.description.toLowerCase().includes(searchQuery.toLowerCase());
+    
+    const matchesType = !selectedType || project.project_type === selectedType;
+    const matchesRegistry = !selectedRegistry || project.registry === selectedRegistry;
+
+    return matchesSearch && matchesType && matchesRegistry;
+  });
+
+  const projectTypes = Array.from(new Set(projects.map((p) => p.project_type)));
+  const registries = Array.from(new Set(projects.map((p) => p.registry)));
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Navbar />
+        <div className="container mx-auto px-4 py-16 flex items-center justify-center">
+          <div className="text-center">
+            <Loader2 className="h-12 w-12 animate-spin text-primary mx-auto mb-4" />
+            <p className="text-muted-foreground">Loading marketplace...</p>
+          </div>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
 
-      <div className="container mx-auto px-4 py-12">
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="mb-4 text-4xl font-bold text-foreground">Carbon Credit Marketplace</h1>
-          <p className="text-lg text-muted-foreground">
-            Browse verified carbon offset projects from around the world
-          </p>
-        </div>
-
-        {/* Search and Filters */}
-        <div className="mb-8 space-y-4">
-          <div className="flex flex-col gap-4 md:flex-row">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
-              <Input
-                placeholder="Search projects by name, location, or registry..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10"
-              />
-            </div>
-            <Button variant="outline" className="flex items-center gap-2">
-              <SlidersHorizontal className="h-4 w-4" />
-              Filters
-            </Button>
+      {/* Hero Section */}
+      <section className="border-b bg-gradient-to-b from-primary/5 to-background py-12">
+        <div className="container mx-auto px-4">
+          <div className="mb-8 text-center">
+            <h1 className="mb-4 text-4xl font-bold text-foreground">
+              Carbon Credit Marketplace
+            </h1>
+            <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
+              Browse verified carbon offset projects from around India. Support sustainable initiatives
+              and offset your carbon footprint.
+            </p>
           </div>
 
-          {/* Filter Tags */}
-          <div className="space-y-3">
-            <div>
-              <p className="mb-2 text-sm font-medium text-muted-foreground">Project Type</p>
-              <div className="flex flex-wrap gap-2">
-                {projectTypes.map((type) => (
-                  <Badge
-                    key={type}
-                    variant={type === "All Projects" ? "default" : "outline"}
-                    className="cursor-pointer transition-colors hover:bg-primary hover:text-primary-foreground"
-                  >
-                    {type}
-                  </Badge>
-                ))}
+          {/* Search and Filter */}
+          <div className="mx-auto max-w-4xl space-y-4">
+            <div className="flex gap-2">
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                <Input
+                  placeholder="Search projects by name, location, or type..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-10"
+                />
               </div>
+              <Button variant="outline" size="icon">
+                <SlidersHorizontal className="h-4 w-4" />
+              </Button>
             </div>
-            <div>
-              <p className="mb-2 text-sm font-medium text-muted-foreground">Registry</p>
-              <div className="flex flex-wrap gap-2">
-                {registries.map((registry) => (
-                  <Badge
-                    key={registry}
-                    variant={registry === "All Registries" ? "default" : "outline"}
-                    className="cursor-pointer transition-colors hover:bg-primary hover:text-primary-foreground"
-                  >
-                    {registry}
-                  </Badge>
-                ))}
-              </div>
+
+            {/* Filter Chips */}
+            <div className="flex flex-wrap gap-2">
+              <span className="text-sm text-muted-foreground">Filter by:</span>
+              
+              {/* Type Filters */}
+              <Badge
+                variant={selectedType === null ? "default" : "outline"}
+                className="cursor-pointer"
+                onClick={() => setSelectedType(null)}
+              >
+                All Types
+              </Badge>
+              {projectTypes.map((type) => (
+                <Badge
+                  key={type}
+                  variant={selectedType === type ? "default" : "outline"}
+                  className="cursor-pointer"
+                  onClick={() => setSelectedType(type)}
+                >
+                  {type.replace(/_/g, " ")}
+                </Badge>
+              ))}
+
+              {/* Registry Filters */}
+              {registries.map((registry) => (
+                <Badge
+                  key={registry}
+                  variant={selectedRegistry === registry ? "default" : "outline"}
+                  className="cursor-pointer"
+                  onClick={() => setSelectedRegistry(registry)}
+                >
+                  {registry}
+                </Badge>
+              ))}
             </div>
           </div>
         </div>
+      </section>
 
-        {/* Results Count */}
-        <div className="mb-6">
-          <p className="text-sm text-muted-foreground">
-            Showing <span className="font-semibold text-foreground">{projects.length}</span> verified projects
-          </p>
-        </div>
+      {/* Projects Grid */}
+      <section className="py-12">
+        <div className="container mx-auto px-4">
+          <div className="mb-6 flex items-center justify-between">
+            <p className="text-muted-foreground">
+              Showing {filteredProjects.length} of {projects.length} projects
+            </p>
+          </div>
 
-        {/* Project Grid */}
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {projects.map((project) => (
-            <ProjectCard key={project.id} {...project} />
-          ))}
+          {filteredProjects.length === 0 ? (
+            <div className="text-center py-16">
+              <p className="text-muted-foreground text-lg mb-4">No projects found matching your criteria</p>
+              <Button onClick={() => {
+                setSearchQuery("");
+                setSelectedType(null);
+                setSelectedRegistry(null);
+              }}>
+                Clear Filters
+              </Button>
+            </div>
+          ) : (
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {filteredProjects.map((project) => (
+                <ProjectCard
+                  key={project.id}
+                  id={project.id}
+                  name={project.title}
+                  type={project.project_type.replace(/_/g, " ")}
+                  location={project.location_country}
+                  registry={`${project.registry}`}
+                  pricePerTon={project.price_per_ton}
+                  availableCredits={project.available_credits}
+                  image={getProjectImage(project.project_type)}
+                  verified={project.status === "verified" || project.status === "active"}
+                />
+              ))}
+            </div>
+          )}
         </div>
-
-        {/* Load More */}
-        <div className="mt-12 text-center">
-          <Button variant="outline" size="lg">
-            Load More Projects
-          </Button>
-        </div>
-      </div>
+      </section>
 
       <Footer />
     </div>

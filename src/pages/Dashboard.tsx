@@ -2,13 +2,12 @@ import { useEffect, useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useUserRole } from "@/hooks/useUserRole";
 import { supabase } from "@/integrations/supabase/client";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
 import StatCard from "@/components/StatCard";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { TrendingUp, Wallet, ShoppingCart, Award, Plus, Zap } from "lucide-react";
 import { Link } from "react-router-dom";
+import { formatINR } from "@/utils/currency";
 
 const Dashboard = () => {
   const { user } = useAuth();
@@ -60,26 +59,23 @@ const Dashboard = () => {
   }, [user, isProjectOwner]);
 
   return (
-    <div className="min-h-screen bg-background">
-      <Navbar />
-      
-      <main className="container mx-auto px-4 py-8">
-        <div className="mb-8">
-          <h1 className="mb-2 text-3xl font-bold text-foreground">
-            Welcome back, {user?.user_metadata?.full_name || "User"}
-          </h1>
-          <p className="text-muted-foreground">
-            Your roles: {roles.join(", ") || "buyer"}
-          </p>
-        </div>
+    <div className="container mx-auto px-4 py-8">
+      <div className="mb-8">
+        <h1 className="mb-2 text-3xl font-bold text-foreground">
+          Welcome back, {user?.user_metadata?.full_name || "User"}
+        </h1>
+        <p className="text-muted-foreground">
+          Your roles: {roles.join(", ") || "buyer"}
+        </p>
+      </div>
 
-        {/* Stats Grid */}
-        <div className="mb-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <StatCard
-            icon={<Wallet className="h-6 w-6 text-primary" />}
-            label="Wallet Balance"
-            value={`$${wallet?.balance?.toFixed(2) || "0.00"}`}
-          />
+      {/* Stats Grid */}
+      <div className="mb-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <StatCard
+          icon={<Wallet className="h-6 w-6 text-primary" />}
+          label="Wallet Balance"
+          value={formatINR(wallet?.balance || 0)}
+        />
           <StatCard
             icon={<TrendingUp className="h-6 w-6 text-primary" />}
             label="Total Credits"
@@ -152,12 +148,12 @@ const Dashboard = () => {
                       {tx.projects?.title || "Project"}
                     </p>
                     <p className="text-sm text-muted-foreground">
-                      {tx.credits} credits @ ${tx.price_per_ton}/ton
+                      {tx.credits} credits @ {formatINR(tx.price_per_ton)}/ton
                     </p>
                   </div>
                   <div className="text-right">
                     <p className="font-bold text-foreground">
-                      ${tx.total_amount.toFixed(2)}
+                      {formatINR(tx.total_amount)}
                     </p>
                     <p className="text-xs text-muted-foreground">
                       {new Date(tx.created_at).toLocaleDateString()}
@@ -206,12 +202,9 @@ const Dashboard = () => {
                   </Link>
                 </Button>
               </div>
-            )}
-          </Card>
-        )}
-      </main>
-
-      <Footer />
+          )}
+        </Card>
+      )}
     </div>
   );
 };
