@@ -139,8 +139,14 @@ const Login = () => {
 
         <Separator className="my-6" />
 
-        <div className="space-y-3 text-center text-sm text-muted-foreground">
-          <p>
+        <div className="space-y-3 text-center text-sm">
+          <p className="text-muted-foreground">
+            Want to try the platform first?{" "}
+            <Link to="/demo-login" className="font-medium text-primary hover:underline">
+              Use Demo Login
+            </Link>
+          </p>
+          <p className="text-muted-foreground">
             Don't have an account?{" "}
             <Link to="/signup" className="font-medium text-primary hover:underline">
               Sign up as buyer
