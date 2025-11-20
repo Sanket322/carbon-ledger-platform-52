@@ -37,6 +37,7 @@ import Terms from "./pages/legal/Terms";
 import Privacy from "./pages/legal/Privacy";
 import Refund from "./pages/legal/Refund";
 import Disclaimer from "./pages/legal/Disclaimer";
+import DemoLogin from "./pages/DemoLogin";
 
 const queryClient = new QueryClient();
 
@@ -54,9 +55,10 @@ const App = () => (
             <Route path="/about" element={<About />} />
             <Route path="/how-it-works" element={<HowItWorks />} />
             <Route path="/knowledge" element={<Knowledge />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/signup/project-owner" element={<ProjectOwnerSignup />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/demo-login" element={<DemoLogin />} />
+            <Route path="/signup" element={<Signup />} />
+            <Route path="/signup/project-owner" element={<ProjectOwnerSignup />} />
             
             {/* Protected Routes */}
               <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
