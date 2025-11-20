@@ -39,6 +39,7 @@ import Privacy from "./pages/legal/Privacy";
 import Refund from "./pages/legal/Refund";
 import Disclaimer from "./pages/legal/Disclaimer";
 import DemoLogin from "./pages/DemoLogin";
+import OwnerAnalytics from "./pages/OwnerAnalytics";
 
 const queryClient = new QueryClient();
 
@@ -75,6 +76,7 @@ const App = () => (
               <Route path="/profile" element={<Profile />} />
               <Route path="/energy" element={<EnergyDashboard />} />
               <Route path="/register-project" element={<RegisterProject />} />
+              <Route path="/owner-analytics" element={<OwnerAnalytics />} />
             </Route>
             
             {/* Protected Routes without Sidebar */}
