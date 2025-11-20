@@ -12,6 +12,7 @@ import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, Loader2, ShoppingCart } from "lucide-react";
 import { toast } from "sonner";
+import { formatINR, convertUSDtoINR } from "@/utils/currency";
 
 export default function PurchaseProject() {
   const { id } = useParams();
@@ -36,7 +37,7 @@ export default function PurchaseProject() {
         .from("projects")
         .select("*")
         .eq("id", id)
-        .eq("status", "active")
+        .in("status", ["active", "verified"])
         .single();
 
       if (projectError) throw projectError;
@@ -79,7 +80,9 @@ export default function PurchaseProject() {
       return;
     }
 
-    const totalCost = creditAmount * project.price_per_ton;
+    const priceInINR = convertUSDtoINR(project.price_per_ton);
+    const totalCost = creditAmount * priceInINR;
+    
     if (totalCost > wallet.balance) {
       toast.error("Insufficient wallet balance");
       return;
@@ -96,7 +99,7 @@ export default function PurchaseProject() {
           seller_id: project.owner_id,
           project_id: project.id,
           credits: creditAmount,
-          price_per_ton: project.price_per_ton,
+          price_per_ton: priceInINR,
           total_amount: totalCost,
           transaction_type: "purchase",
           status: "completed",
@@ -128,7 +131,7 @@ export default function PurchaseProject() {
       toast.success("Purchase completed successfully!");
       navigate("/dashboard");
     } catch (error) {
-      console.error("Purchase error:", error);
+      console.error("Error processing purchase:", error);
       toast.error("Failed to complete purchase");
     } finally {
       setPurchasing(false);
@@ -139,9 +142,13 @@ export default function PurchaseProject() {
     return (
       <div className="min-h-screen bg-background">
         <Navbar />
-        <div className="flex min-h-[60vh] items-center justify-center">
-          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <div className="container mx-auto px-4 py-16 flex items-center justify-center">
+          <div className="text-center">
+            <Loader2 className="h-12 w-12 animate-spin text-primary mx-auto mb-4" />
+            <p className="text-muted-foreground">Loading project details...</p>
+          </div>
         </div>
+        <Footer />
       </div>
     );
   }
@@ -150,30 +157,49 @@ export default function PurchaseProject() {
     return (
       <div className="min-h-screen bg-background">
         <Navbar />
-        <div className="container mx-auto px-4 py-12">
-          <p className="text-center text-muted-foreground">Project not found</p>
+        <div className="container mx-auto px-4 py-16">
+          <div className="text-center">
+            <h2 className="text-2xl font-bold mb-4">Project Not Found</h2>
+            <p className="text-muted-foreground mb-6">
+              The project you're looking for doesn't exist or is not available for purchase.
+            </p>
+            <Button asChild>
+              <Link to="/marketplace">Browse Projects</Link>
+            </Button>
+          </div>
         </div>
+        <Footer />
       </div>
     );
   }
 
   const creditAmount = parseFloat(credits) || 0;
-  const totalCost = creditAmount * project.price_per_ton;
+  const priceInINR = convertUSDtoINR(project.price_per_ton);
+  const totalCost = creditAmount * priceInINR;
 
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
 
-      <div className="container mx-auto px-4 py-12">
-        <Button variant="ghost" className="mb-6" asChild>
-          <Link to={`/project/${id}`}>
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to Project
-          </Link>
-        </Button>
+      <section className="py-12">
+        <div className="container mx-auto px-4">
+          <Button
+            variant="ghost"
+            className="mb-6"
+            asChild
+          >
+            <Link to={`/project/${id}`}>
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Back to Project
+            </Link>
+          </Button>
 
-        <div className="mx-auto max-w-4xl">
-          <h1 className="mb-8 text-3xl font-bold text-foreground">Purchase Carbon Credits</h1>
+          <div className="mb-8">
+            <h1 className="text-3xl font-bold mb-2">Purchase Carbon Credits</h1>
+            <p className="text-muted-foreground">
+              Complete your purchase to offset your carbon footprint
+            </p>
+          </div>
 
           <div className="grid gap-6 lg:grid-cols-2">
             {/* Project Summary */}
@@ -189,23 +215,32 @@ export default function PurchaseProject() {
 
                 <Separator />
 
-                <div className="space-y-2">
-                  <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Type:</span>
-                    <Badge variant="outline">{project.project_type}</Badge>
+                <div className="space-y-3">
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-muted-foreground">Type:</span>
+                    <Badge variant="outline">{project.project_type.replace(/_/g, " ")}</Badge>
                   </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Registry:</span>
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-muted-foreground">Registry:</span>
                     <Badge variant="secondary">{project.registry}</Badge>
                   </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Price per Ton:</span>
-                    <span className="font-semibold">${project.price_per_ton}</span>
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-muted-foreground">Price per Credit:</span>
+                    <span className="font-semibold">{formatINR(priceInINR)}</span>
                   </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Available Credits:</span>
-                    <span className="font-semibold">{project.available_credits.toLocaleString()}</span>
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-muted-foreground">Available Credits:</span>
+                    <span className="font-semibold">{project.available_credits.toLocaleString()} tons</span>
                   </div>
+                </div>
+
+                <Separator />
+
+                <div className="rounded-lg bg-primary/5 p-4">
+                  <p className="text-sm text-muted-foreground mb-2">Environmental Impact:</p>
+                  <p className="text-lg font-semibold text-primary">
+                    Each credit offsets 1 ton of CO₂ emissions
+                  </p>
                 </div>
               </CardContent>
             </Card>
@@ -228,34 +263,44 @@ export default function PurchaseProject() {
                     min="1"
                     max={project.available_credits}
                   />
+                  <p className="text-xs text-muted-foreground">
+                    Maximum available: {project.available_credits.toLocaleString()} credits
+                  </p>
                 </div>
 
                 <Separator />
 
-                <div className="space-y-2">
-                  <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Credits:</span>
-                    <span className="font-medium">{creditAmount.toLocaleString()} tons</span>
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between py-2">
+                    <span className="text-muted-foreground">Price per Credit</span>
+                    <span className="font-semibold">{formatINR(priceInINR)}</span>
                   </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Price per Ton:</span>
-                    <span className="font-medium">${project.price_per_ton}</span>
+                  <div className="flex items-center justify-between py-2">
+                    <span className="text-muted-foreground">Credits</span>
+                    <span className="font-semibold">{creditAmount.toLocaleString()} tons</span>
                   </div>
                   <Separator />
-                  <div className="flex justify-between">
-                    <span className="font-semibold">Total Cost:</span>
-                    <span className="text-xl font-bold text-primary">${totalCost.toFixed(2)}</span>
+                  <div className="flex items-center justify-between py-3">
+                    <span className="text-lg font-semibold">Total Cost</span>
+                    <span className="text-2xl font-bold text-primary">
+                      {formatINR(totalCost)}
+                    </span>
                   </div>
                 </div>
 
                 {wallet && (
-                  <div className="rounded-lg bg-muted p-4">
-                    <div className="flex justify-between text-sm">
-                      <span className="text-muted-foreground">Your Wallet Balance:</span>
-                      <span className={`font-semibold ${wallet.balance < totalCost ? "text-destructive" : "text-foreground"}`}>
-                        ${wallet.balance.toFixed(2)}
+                  <div className={`rounded-lg p-4 ${wallet.balance < totalCost ? "bg-destructive/10" : "bg-muted"}`}>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-muted-foreground">Wallet Balance</span>
+                      <span className={`font-semibold ${wallet.balance < totalCost ? "text-destructive" : "text-green-600"}`}>
+                        {formatINR(wallet.balance)}
                       </span>
                     </div>
+                    {wallet.balance < totalCost && (
+                      <p className="text-xs text-destructive mt-2">
+                        Insufficient balance. Please add funds to your wallet.
+                      </p>
+                    )}
                   </div>
                 )}
 
@@ -263,7 +308,13 @@ export default function PurchaseProject() {
                   className="w-full"
                   size="lg"
                   onClick={handlePurchase}
-                  disabled={purchasing || !creditAmount || creditAmount > project.available_credits || (wallet && totalCost > wallet.balance)}
+                  disabled={
+                    purchasing ||
+                    !creditAmount ||
+                    creditAmount <= 0 ||
+                    creditAmount > project.available_credits ||
+                    (wallet && wallet.balance < totalCost)
+                  }
                 >
                   {purchasing ? (
                     <>
@@ -277,11 +328,15 @@ export default function PurchaseProject() {
                     </>
                   )}
                 </Button>
+
+                <p className="text-xs text-center text-muted-foreground">
+                  By completing this purchase, you agree to our terms and conditions
+                </p>
               </CardContent>
             </Card>
           </div>
         </div>
-      </div>
+      </section>
 
       <Footer />
     </div>

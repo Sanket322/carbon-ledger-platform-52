@@ -4,8 +4,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { Loader2, Search } from "lucide-react";
+import { Loader2, Search, TrendingUp, ShoppingCart, DollarSign } from "lucide-react";
 import { toast } from "sonner";
+import { formatINR } from "@/utils/currency";
 
 export default function TransactionMonitoring() {
   const [transactions, setTransactions] = useState<any[]>([]);
@@ -41,7 +42,8 @@ export default function TransactionMonitoring() {
   const filteredTransactions = transactions.filter(tx =>
     tx.profiles?.full_name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
     tx.projects?.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    tx.serial_number?.toLowerCase().includes(searchQuery.toLowerCase())
+    tx.serial_number?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    tx.transaction_type?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const totalVolume = transactions.reduce((sum, tx) => sum + Number(tx.total_amount), 0);
@@ -59,103 +61,120 @@ export default function TransactionMonitoring() {
     <div className="space-y-6">
       <div>
         <h2 className="text-3xl font-bold text-foreground">Transaction Monitoring</h2>
-        <p className="text-muted-foreground">Monitor all platform transactions</p>
+        <p className="text-muted-foreground">Monitor all platform transactions and sales</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <Card>
-          <CardHeader>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Transactions</CardTitle>
+            <ShoppingCart className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <p className="text-3xl font-bold">{transactions.length}</p>
+            <p className="text-xs text-muted-foreground mt-1">All completed purchases</p>
           </CardContent>
         </Card>
         <Card>
-          <CardHeader>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Volume</CardTitle>
+            <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <p className="text-3xl font-bold">${totalVolume.toLocaleString()}</p>
+            <p className="text-3xl font-bold">{formatINR(totalVolume)}</p>
+            <p className="text-xs text-muted-foreground mt-1">Revenue generated</p>
           </CardContent>
         </Card>
         <Card>
-          <CardHeader>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Credits Traded</CardTitle>
+            <TrendingUp className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <p className="text-3xl font-bold">{totalCredits.toLocaleString()}</p>
+            <p className="text-xs text-muted-foreground mt-1">Carbon credits sold</p>
           </CardContent>
         </Card>
       </div>
 
       <Card>
         <CardHeader>
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div>
               <CardTitle>All Transactions</CardTitle>
-              <CardDescription>Complete transaction history</CardDescription>
+              <CardDescription>Complete transaction and sales history</CardDescription>
             </div>
-            <div className="relative">
+            <div className="relative w-full sm:w-64">
               <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
               <Input
                 placeholder="Search transactions..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-8 w-64"
+                className="pl-8"
               />
             </div>
           </div>
         </CardHeader>
         <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Date</TableHead>
-                <TableHead>Buyer</TableHead>
-                <TableHead>Project</TableHead>
-                <TableHead>Type</TableHead>
-                <TableHead>Credits</TableHead>
-                <TableHead>Price/Ton</TableHead>
-                <TableHead>Total Amount</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Serial #</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filteredTransactions.map((transaction) => (
-                <TableRow key={transaction.id}>
-                  <TableCell>
-                    {new Date(transaction.created_at).toLocaleDateString()}
-                  </TableCell>
-                  <TableCell>
-                    {transaction.profiles?.full_name || "Unknown"}
-                  </TableCell>
-                  <TableCell className="max-w-xs truncate">
-                    {transaction.projects?.title || "N/A"}
-                  </TableCell>
-                  <TableCell>
-                    <Badge variant="outline">
-                      {transaction.transaction_type}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>{transaction.credits.toLocaleString()}</TableCell>
-                  <TableCell>${transaction.price_per_ton}</TableCell>
-                  <TableCell className="font-semibold">
-                    ${transaction.total_amount.toLocaleString()}
-                  </TableCell>
-                  <TableCell>
-                    <Badge variant={transaction.status === "completed" ? "default" : "secondary"}>
-                      {transaction.status}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="text-xs text-muted-foreground">
-                    {transaction.serial_number || "N/A"}
-                  </TableCell>
+          <div className="rounded-md border">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Date & Time</TableHead>
+                  <TableHead>Buyer</TableHead>
+                  <TableHead>Project</TableHead>
+                  <TableHead className="text-right">Credits</TableHead>
+                  <TableHead className="text-right">Price/Ton</TableHead>
+                  <TableHead className="text-right">Total Amount</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead>Serial #</TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableHeader>
+              <TableBody>
+                {filteredTransactions.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={8} className="text-center py-8 text-muted-foreground">
+                      No transactions found
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  filteredTransactions.map((tx) => (
+                    <TableRow key={tx.id}>
+                      <TableCell className="font-medium">
+                        {new Date(tx.created_at).toLocaleDateString()}
+                        <p className="text-xs text-muted-foreground">
+                          {new Date(tx.created_at).toLocaleTimeString()}
+                        </p>
+                      </TableCell>
+                      <TableCell>
+                        {tx.profiles?.full_name || "N/A"}
+                        {tx.profiles?.company_name && (
+                          <p className="text-sm text-muted-foreground">{tx.profiles.company_name}</p>
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        <div className="max-w-xs">
+                          <p className="font-medium truncate">{tx.projects?.title || "N/A"}</p>
+                          <p className="text-sm text-muted-foreground">
+                            {tx.projects?.project_type?.replace(/_/g, " ")}
+                          </p>
+                        </div>
+                      </TableCell>
+                      <TableCell className="text-right font-semibold">{tx.credits.toLocaleString()}</TableCell>
+                      <TableCell className="text-right">{formatINR(tx.price_per_ton)}</TableCell>
+                      <TableCell className="text-right font-semibold text-primary">{formatINR(tx.total_amount)}</TableCell>
+                      <TableCell>
+                        <Badge variant={tx.status === "completed" ? "default" : "secondary"}>
+                          {tx.status}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-muted-foreground text-xs">{tx.serial_number || "Pending"}</TableCell>
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          </div>
         </CardContent>
       </Card>
     </div>
