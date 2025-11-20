@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import Navbar from "@/components/Navbar";
@@ -6,12 +6,15 @@ import Footer from "@/components/Footer";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { toast } from "sonner";
-import { User, Building2, ShieldCheck, ArrowRight, Copy, LogIn, Loader2, CheckCircle2 } from "lucide-react";
+import { User, Building2, ShieldCheck, ArrowRight, Copy, LogIn, Loader2, CheckCircle2, AlertCircle, Sparkles } from "lucide-react";
 
 const DemoLogin = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState<string | null>(null);
+  const [settingUp, setSettingUp] = useState(false);
+  const [accountsExist, setAccountsExist] = useState<boolean | null>(null);
 
   const demoAccounts = [
     {
@@ -60,6 +63,64 @@ const DemoLogin = () => {
       redirect: "/admin"
     }
   ];
+
+  useEffect(() => {
+    checkDemoAccounts();
+  }, []);
+
+  const checkDemoAccounts = async () => {
+    try {
+      // Try to check if any demo account exists by attempting to get user data
+      const { data: profiles } = await supabase
+        .from('profiles')
+        .select('id')
+        .in('id', ['buyer@demo.offst.ai', 'owner@demo.offst.ai', 'admin@demo.offst.ai'])
+        .limit(1);
+      
+      setAccountsExist(profiles && profiles.length > 0);
+    } catch (error) {
+      console.error("Error checking demo accounts:", error);
+      setAccountsExist(false);
+    }
+  };
+
+  const createDemoAccounts = async () => {
+    setSettingUp(true);
+    try {
+      const accounts = [
+        { email: "buyer@demo.offst.ai", password: "Demo123!@#", fullName: "Demo Buyer", role: "buyer" },
+        { email: "owner@demo.offst.ai", password: "Demo123!@#", fullName: "Demo Project Owner", role: "project_owner" },
+        { email: "admin@demo.offst.ai", password: "Demo123!@#", fullName: "Demo Admin", role: "admin" }
+      ];
+
+      for (const account of accounts) {
+        const { error: signUpError } = await supabase.auth.signUp({
+          email: account.email,
+          password: account.password,
+          options: {
+            data: {
+              full_name: account.fullName,
+              user_role: account.role
+            }
+          }
+        });
+
+        if (signUpError && !signUpError.message.includes("already registered")) {
+          throw signUpError;
+        }
+      }
+
+      toast.success("Demo accounts created successfully!", {
+        description: "You can now login with any demo account"
+      });
+      setAccountsExist(true);
+    } catch (error: any) {
+      toast.error(`Failed to create demo accounts: ${error.message}`);
+      console.error("Demo account creation error:", error);
+    } finally {
+      setSettingUp(false);
+    }
+  };
 
   const handleDemoLogin = async (email: string, password: string, role: string, redirect: string) => {
     setLoading(role);
@@ -111,6 +172,38 @@ const DemoLogin = () => {
               instantly access each user type's dashboard with live demo data.
             </p>
           </div>
+
+          {/* Setup Alert */}
+          {accountsExist === false && (
+            <Alert className="mb-8 border-orange-500/50 bg-orange-500/10">
+              <AlertCircle className="h-4 w-4 text-orange-500" />
+              <AlertDescription className="ml-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-foreground">
+                    Demo accounts need to be set up first. Click the button to create them automatically.
+                  </span>
+                  <Button 
+                    onClick={createDemoAccounts}
+                    disabled={settingUp}
+                    size="sm"
+                    className="ml-4"
+                  >
+                    {settingUp ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Setting up...
+                      </>
+                    ) : (
+                      <>
+                        <Sparkles className="mr-2 h-4 w-4" />
+                        Setup Demo Accounts
+                      </>
+                    )}
+                  </Button>
+                </div>
+              </AlertDescription>
+            </Alert>
+          )}
 
           {/* Demo Accounts Grid */}
           <div className="mb-8 grid gap-6 md:grid-cols-3">
@@ -177,7 +270,7 @@ const DemoLogin = () => {
                     {/* Direct Login Button */}
                     <Button
                       onClick={() => handleDemoLogin(account.email, account.password, account.role, account.redirect)}
-                      disabled={isLoading}
+                      disabled={isLoading || accountsExist === false}
                       className="w-full"
                       size="lg"
                     >
