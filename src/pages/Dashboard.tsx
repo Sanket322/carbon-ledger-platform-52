@@ -7,7 +7,7 @@ import Footer from "@/components/Footer";
 import StatCard from "@/components/StatCard";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { TrendingUp, Wallet, ShoppingCart, Award, Plus } from "lucide-react";
+import { TrendingUp, Wallet, ShoppingCart, Award, Plus, Zap } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const Dashboard = () => {
@@ -102,12 +102,20 @@ const Dashboard = () => {
           <h2 className="mb-4 text-xl font-bold text-foreground">Quick Actions</h2>
           <div className="flex flex-wrap gap-4">
             {isProjectOwner && (
-              <Button asChild variant="hero">
-                <Link to="/register-project">
-                  <Plus className="mr-2 h-4 w-4" />
-                  Register New Project
-                </Link>
-              </Button>
+              <>
+                <Button asChild variant="hero">
+                  <Link to="/register-project">
+                    <Plus className="mr-2 h-4 w-4" />
+                    Register New Project
+                  </Link>
+                </Button>
+                <Button asChild variant="outline-primary">
+                  <Link to="/energy">
+                    <Zap className="mr-2 h-4 w-4" />
+                    Energy Dashboard
+                  </Link>
+                </Button>
+              </>
             )}
             <Button asChild variant={isProjectOwner ? "outline-primary" : "hero"}>
               <Link to="/marketplace">
@@ -121,14 +129,6 @@ const Dashboard = () => {
                 Manage Wallet
               </Link>
             </Button>
-            {isProjectOwner && (
-              <Button asChild variant="success">
-                <Link to="/register-project">
-                  <Plus className="mr-2 h-4 w-4" />
-                  Register New Project
-                </Link>
-              </Button>
-            )}
             {isAdmin && (
               <Button asChild variant="outline">
                 <Link to="/admin">Admin Panel</Link>

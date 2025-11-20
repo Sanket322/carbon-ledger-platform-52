@@ -9,7 +9,7 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { user, signOut } = useAuth();
-  const { isAdmin } = useUserRole();
+  const { isAdmin, isProjectOwner } = useUserRole();
   const navigate = useNavigate();
 
   const navLinks = [
@@ -51,6 +51,11 @@ const Navbar = () => {
                 <Button variant="ghost" asChild>
                   <Link to="/dashboard">Dashboard</Link>
                 </Button>
+                {isProjectOwner && (
+                  <Button variant="ghost" asChild>
+                    <Link to="/energy">Energy</Link>
+                  </Button>
+                )}
                 {isAdmin && (
                   <Button variant="ghost" asChild>
                     <Link to="/admin">Admin</Link>
@@ -102,6 +107,13 @@ const Navbar = () => {
                           Dashboard
                         </Link>
                       </Button>
+                      {isProjectOwner && (
+                        <Button variant="outline" asChild>
+                          <Link to="/energy" onClick={() => setIsOpen(false)}>
+                            Energy
+                          </Link>
+                        </Button>
+                      )}
                       {isAdmin && (
                         <Button variant="outline" asChild>
                           <Link to="/admin" onClick={() => setIsOpen(false)}>

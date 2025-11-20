@@ -14,6 +14,57 @@ export type Database = {
   }
   public: {
     Tables: {
+      energy_readings: {
+        Row: {
+          carbon_credits_generated: number | null
+          created_at: string
+          energy_generated_kwh: number
+          id: string
+          notes: string | null
+          project_id: string
+          reading_date: string
+          reading_type: string
+          updated_at: string
+        }
+        Insert: {
+          carbon_credits_generated?: number | null
+          created_at?: string
+          energy_generated_kwh: number
+          id?: string
+          notes?: string | null
+          project_id: string
+          reading_date?: string
+          reading_type?: string
+          updated_at?: string
+        }
+        Update: {
+          carbon_credits_generated?: number | null
+          created_at?: string
+          energy_generated_kwh?: number
+          id?: string
+          notes?: string | null
+          project_id?: string
+          reading_date?: string
+          reading_type?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "energy_readings_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "energy_summary"
+            referencedColumns: ["project_id"]
+          },
+          {
+            foreignKeyName: "energy_readings_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       notifications: {
         Row: {
           created_at: string
@@ -260,6 +311,13 @@ export type Database = {
             foreignKeyName: "retirement_certificates_project_id_fkey"
             columns: ["project_id"]
             isOneToOne: false
+            referencedRelation: "energy_summary"
+            referencedColumns: ["project_id"]
+          },
+          {
+            foreignKeyName: "retirement_certificates_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
             referencedRelation: "projects"
             referencedColumns: ["id"]
           },
@@ -306,6 +364,13 @@ export type Database = {
           transaction_type?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "transactions_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "energy_summary"
+            referencedColumns: ["project_id"]
+          },
           {
             foreignKeyName: "transactions_project_id_fkey"
             columns: ["project_id"]
@@ -368,7 +433,19 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      energy_summary: {
+        Row: {
+          avg_energy_per_reading: number | null
+          last_reading_date: string | null
+          owner_id: string | null
+          project_id: string | null
+          project_name: string | null
+          total_credits_generated: number | null
+          total_energy_kwh: number | null
+          total_readings: number | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       has_role: {
