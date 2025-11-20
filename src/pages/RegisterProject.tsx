@@ -144,10 +144,7 @@ export default function RegisterProject() {
       return;
     }
 
-    if (!formData.ownership_proof_url) {
-      toast.error("Please upload proof of ownership");
-      return;
-    }
+    // Ownership proof is now optional
 
     try {
       setLoading(true);
@@ -387,7 +384,7 @@ export default function RegisterProject() {
             {currentStep === 2 && (
               <div className="space-y-6">
                 <div>
-                  <Label htmlFor="ownership_proof">Proof of Ownership *</Label>
+                  <Label htmlFor="ownership_proof">Proof of Ownership (Optional)</Label>
                   <Input
                     id="ownership_proof"
                     type="file"
