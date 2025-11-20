@@ -27,6 +27,7 @@ import RoleManagement from "./pages/admin/RoleManagement";
 import ProjectManagement from "./pages/admin/ProjectManagement";
 import KYCManagement from "./pages/admin/KYCManagement";
 import TransactionMonitoring from "./pages/admin/TransactionMonitoring";
+import WalletManagement from "./pages/admin/WalletManagement";
 import Reports from "./pages/admin/Reports";
 import Settings from "./pages/admin/Settings";
 import CertificationWorkflow from "./pages/admin/CertificationWorkflow";
@@ -90,6 +91,7 @@ const App = () => (
               <Route path="projects" element={<ProjectManagement />} />
               <Route path="certification" element={<CertificationWorkflow />} />
               <Route path="kyc" element={<KYCManagement />} />
+              <Route path="wallets" element={<WalletManagement />} />
               <Route path="transactions" element={<TransactionMonitoring />} />
               <Route path="reports" element={<Reports />} />
               <Route path="settings" element={<Settings />} />

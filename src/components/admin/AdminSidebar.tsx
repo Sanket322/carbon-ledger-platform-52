@@ -7,7 +7,8 @@ import {
   BarChart3,
   Settings,
   UserCog,
-  ClipboardCheck
+  ClipboardCheck,
+  Wallet
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
@@ -30,6 +31,7 @@ const adminItems = [
   { title: "Project Management", url: "/admin/projects", icon: FileCheck },
   { title: "Certification Workflow", url: "/admin/certification", icon: ClipboardCheck },
   { title: "KYC Approvals", url: "/admin/kyc", icon: ShieldCheck },
+  { title: "Wallet Management", url: "/admin/wallets", icon: Wallet },
   { title: "Transactions", url: "/admin/transactions", icon: DollarSign },
   { title: "Reports", url: "/admin/reports", icon: BarChart3 },
   { title: "Settings", url: "/admin/settings", icon: Settings },
