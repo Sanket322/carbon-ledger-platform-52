@@ -6,9 +6,13 @@ import Footer from "@/components/Footer";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Zap, TrendingUp, Calendar, Plus } from "lucide-react";
+import { Zap, TrendingUp, Calendar, Plus, Download } from "lucide-react";
 import { toast } from "sonner";
 import { Link } from "react-router-dom";
+import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 interface Project {
   id: string;
@@ -43,6 +47,10 @@ const EnergyDashboard = () => {
   const [energyReadings, setEnergyReadings] = useState<EnergyReading[]>([]);
   const [summary, setSummary] = useState<EnergySummary | null>(null);
   const [loading, setLoading] = useState(true);
+  const [timePeriod, setTimePeriod] = useState<"daily" | "weekly" | "monthly">("daily");
+  const [apiEndpoint, setApiEndpoint] = useState("");
+  const [apiKey, setApiKey] = useState("");
+  const [showApiConfig, setShowApiConfig] = useState(false);
 
   useEffect(() => {
     if (!user) return;
@@ -84,8 +92,8 @@ const EnergyDashboard = () => {
         .from("energy_readings")
         .select("*")
         .eq("project_id", projectId)
-        .order("reading_date", { ascending: false })
-        .limit(50);
+        .order("reading_date", { ascending: true })
+        .limit(100);
 
       if (readingsError) throw readingsError;
       setEnergyReadings(readings || []);
@@ -112,6 +120,74 @@ const EnergyDashboard = () => {
       toast.error("Failed to load energy data");
       console.error(error);
     }
+  };
+
+  const handleApiSync = async () => {
+    if (!selectedProject || !apiEndpoint) {
+      toast.error("Please select a project and provide an API endpoint");
+      return;
+    }
+
+    try {
+      const response = await fetch(`https://kqaywzwiudxtkxfczflz.supabase.co/functions/v1/sync-energy-data`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`
+        },
+        body: JSON.stringify({
+          project_id: selectedProject,
+          api_endpoint: apiEndpoint,
+          api_key: apiKey
+        })
+      });
+
+      if (response.ok) {
+        toast.success("Energy data synced successfully");
+        fetchEnergyData(selectedProject);
+        setShowApiConfig(false);
+      } else {
+        toast.error("Failed to sync energy data");
+      }
+    } catch (error) {
+      console.error("API sync error:", error);
+      toast.error("Error syncing data");
+    }
+  };
+
+  const getChartData = () => {
+    if (!energyReadings.length) return [];
+
+    const groupedData: { [key: string]: { energy: number; credits: number; count: number } } = {};
+
+    energyReadings.forEach((reading) => {
+      const date = new Date(reading.reading_date);
+      let key: string;
+
+      if (timePeriod === "daily") {
+        key = date.toISOString().split("T")[0];
+      } else if (timePeriod === "weekly") {
+        const weekStart = new Date(date);
+        weekStart.setDate(date.getDate() - date.getDay());
+        key = weekStart.toISOString().split("T")[0];
+      } else {
+        key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
+      }
+
+      if (!groupedData[key]) {
+        groupedData[key] = { energy: 0, credits: 0, count: 0 };
+      }
+
+      groupedData[key].energy += Number(reading.energy_generated_kwh);
+      groupedData[key].credits += Number(reading.carbon_credits_generated);
+      groupedData[key].count += 1;
+    });
+
+    return Object.entries(groupedData).map(([date, data]) => ({
+      date,
+      energy: Number(data.energy.toFixed(2)),
+      credits: Number(data.credits.toFixed(2))
+    }));
   };
 
   if (loading) {
@@ -237,11 +313,85 @@ const EnergyDashboard = () => {
         )}
 
         {/* Tabs for different views */}
-        <Tabs defaultValue="readings" className="w-full">
+        <Tabs defaultValue="charts" className="w-full">
           <TabsList>
+            <TabsTrigger value="charts">Charts & Analytics</TabsTrigger>
             <TabsTrigger value="readings">Energy Readings</TabsTrigger>
             <TabsTrigger value="credits">Carbon Credits</TabsTrigger>
+            <TabsTrigger value="sync">Data Sync</TabsTrigger>
           </TabsList>
+
+          <TabsContent value="charts">
+            <div className="space-y-6">
+              <Card className="p-6">
+                <div className="mb-4 flex items-center justify-between">
+                  <h2 className="text-xl font-bold text-foreground">Energy Generation Trends</h2>
+                  <Select value={timePeriod} onValueChange={(value: any) => setTimePeriod(value)}>
+                    <SelectTrigger className="w-[180px]">
+                      <SelectValue placeholder="Select period" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="daily">Daily</SelectItem>
+                      <SelectItem value="weekly">Weekly</SelectItem>
+                      <SelectItem value="monthly">Monthly</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {energyReadings.length > 0 ? (
+                  <div className="space-y-8">
+                    <div>
+                      <h3 className="mb-4 text-lg font-semibold text-foreground">Energy Production (kWh)</h3>
+                      <ResponsiveContainer width="100%" height={300}>
+                        <LineChart data={getChartData()}>
+                          <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                          <XAxis dataKey="date" stroke="hsl(var(--muted-foreground))" />
+                          <YAxis stroke="hsl(var(--muted-foreground))" />
+                          <Tooltip
+                            contentStyle={{
+                              backgroundColor: "hsl(var(--card))",
+                              border: "1px solid hsl(var(--border))",
+                              borderRadius: "8px"
+                            }}
+                          />
+                          <Legend />
+                          <Line
+                            type="monotone"
+                            dataKey="energy"
+                            stroke="hsl(var(--primary))"
+                            strokeWidth={2}
+                            name="Energy (kWh)"
+                          />
+                        </LineChart>
+                      </ResponsiveContainer>
+                    </div>
+
+                    <div>
+                      <h3 className="mb-4 text-lg font-semibold text-foreground">Carbon Credits Generated</h3>
+                      <ResponsiveContainer width="100%" height={300}>
+                        <BarChart data={getChartData()}>
+                          <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                          <XAxis dataKey="date" stroke="hsl(var(--muted-foreground))" />
+                          <YAxis stroke="hsl(var(--muted-foreground))" />
+                          <Tooltip
+                            contentStyle={{
+                              backgroundColor: "hsl(var(--card))",
+                              border: "1px solid hsl(var(--border))",
+                              borderRadius: "8px"
+                            }}
+                          />
+                          <Legend />
+                          <Bar dataKey="credits" fill="hsl(var(--primary))" name="Carbon Credits (tCO₂e)" />
+                        </BarChart>
+                      </ResponsiveContainer>
+                    </div>
+                  </div>
+                ) : (
+                  <p className="text-center text-muted-foreground">No data available for charts</p>
+                )}
+              </Card>
+            </div>
+          </TabsContent>
 
           <TabsContent value="readings">
             <Card className="p-6">
@@ -328,6 +478,72 @@ const EnergyDashboard = () => {
               ) : (
                 <p className="text-center text-muted-foreground">No carbon credit data available</p>
               )}
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="sync">
+            <Card className="p-6">
+              <h2 className="mb-4 text-xl font-bold text-foreground">Automated Data Sync</h2>
+              <p className="mb-6 text-sm text-muted-foreground">
+                Configure automated energy data import from IoT devices, smart meters, or monitoring APIs.
+              </p>
+
+              <div className="space-y-4">
+                <div>
+                  <Label htmlFor="api-endpoint">API Endpoint URL</Label>
+                  <Input
+                    id="api-endpoint"
+                    type="url"
+                    placeholder="https://api.your-iot-device.com/readings"
+                    value={apiEndpoint}
+                    onChange={(e) => setApiEndpoint(e.target.value)}
+                    className="mt-1"
+                  />
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    The API should return JSON with: reading_date, energy_generated_kwh, carbon_credits_generated
+                  </p>
+                </div>
+
+                <div>
+                  <Label htmlFor="api-key">API Key / Token (Optional)</Label>
+                  <Input
+                    id="api-key"
+                    type="password"
+                    placeholder="Your API authentication key"
+                    value={apiKey}
+                    onChange={(e) => setApiKey(e.target.value)}
+                    className="mt-1"
+                  />
+                </div>
+
+                <div className="flex gap-3">
+                  <Button onClick={handleApiSync} className="flex items-center gap-2">
+                    <Download className="h-4 w-4" />
+                    Sync Data Now
+                  </Button>
+                  <Button variant="outline" onClick={() => setShowApiConfig(!showApiConfig)}>
+                    Webhook Configuration
+                  </Button>
+                </div>
+
+                {showApiConfig && (
+                  <Card className="mt-4 border-primary/20 bg-primary/5 p-4">
+                    <h3 className="mb-2 text-sm font-semibold text-foreground">Webhook Endpoint</h3>
+                    <p className="mb-2 text-xs text-muted-foreground">
+                      Configure your IoT device to POST data to this endpoint:
+                    </p>
+                    <code className="block rounded bg-muted p-2 text-xs">
+                      https://kqaywzwiudxtkxfczflz.supabase.co/functions/v1/energy-webhook
+                    </code>
+                    <p className="mt-3 text-xs text-muted-foreground">
+                      <strong>Headers:</strong> Authorization: Bearer [YOUR_API_KEY]
+                    </p>
+                    <p className="mt-1 text-xs text-muted-foreground">
+                      <strong>Body:</strong> {`{ "project_id": "uuid", "reading_date": "ISO date", "energy_generated_kwh": number, "carbon_credits_generated": number }`}
+                    </p>
+                  </Card>
+                )}
+              </div>
             </Card>
           </TabsContent>
         </Tabs>
