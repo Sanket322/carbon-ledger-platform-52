@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -10,9 +8,10 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Wallet as WalletIcon, ArrowUpRight, ArrowDownRight, DollarSign, Award } from "lucide-react";
+import { Wallet as WalletIcon, ArrowUpRight, ArrowDownRight, Award } from "lucide-react";
 import { toast } from "sonner";
 import { CertificateViewer } from "@/components/CertificateViewer";
+import { formatINR, formatCreditPrice } from "@/utils/currency";
 
 const Wallet = () => {
   const { user } = useAuth();
@@ -143,55 +142,52 @@ const Wallet = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <Navbar />
+    <div className="container mx-auto px-4 py-8">
+      <div className="mb-8">
+        <h1 className="mb-2 text-3xl font-bold text-foreground">Wallet</h1>
+        <p className="text-muted-foreground">
+          Manage your funds and view transaction history
+        </p>
+      </div>
 
-      <main className="container mx-auto px-4 py-8">
-        <div className="mb-8">
-          <h1 className="mb-2 text-3xl font-bold text-foreground">Wallet</h1>
-          <p className="text-muted-foreground">
-            Manage your funds and view transaction history
-          </p>
-        </div>
-
-        {/* Balance Overview */}
-        <div className="mb-8 grid gap-4 sm:grid-cols-3">
-          <Card className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground">Available Balance</p>
-                <p className="text-3xl font-bold text-foreground">
-                  ${wallet?.balance?.toFixed(2) || "0.00"}
-                </p>
-              </div>
-              <WalletIcon className="h-8 w-8 text-primary" />
+      {/* Balance Overview */}
+      <div className="mb-8 grid gap-4 sm:grid-cols-3">
+        <Card className="p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-muted-foreground">Available Balance</p>
+              <p className="text-3xl font-bold text-foreground">
+                {formatINR(wallet?.balance || 0)}
+              </p>
             </div>
-          </Card>
+            <WalletIcon className="h-8 w-8 text-primary" />
+          </div>
+        </Card>
 
-          <Card className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground">Escrow Balance</p>
-                <p className="text-3xl font-bold text-foreground">
-                  ${wallet?.escrow_balance?.toFixed(2) || "0.00"}
-                </p>
-              </div>
-              <DollarSign className="h-8 w-8 text-primary" />
+        <Card className="p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-muted-foreground">Escrow Balance</p>
+              <p className="text-3xl font-bold text-foreground">
+                {formatINR(wallet?.escrow_balance || 0)}
+              </p>
             </div>
-          </Card>
+            <Award className="h-8 w-8 text-primary" />
+          </div>
+        </Card>
 
-          <Card className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground">Total Credits</p>
-                <p className="text-3xl font-bold text-foreground">
-                  {wallet?.total_credits?.toFixed(2) || "0"}
-                </p>
-              </div>
-              <WalletIcon className="h-8 w-8 text-primary" />
+        <Card className="p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-muted-foreground">Total Credits</p>
+              <p className="text-3xl font-bold text-foreground">
+                {wallet?.total_credits?.toFixed(2) || "0"} tCO₂e
+              </p>
             </div>
-          </Card>
-        </div>
+            <WalletIcon className="h-8 w-8 text-primary" />
+          </div>
+        </Card>
+      </div>
 
         {/* Tabs */}
         <Card className="mb-8 p-6">
@@ -228,7 +224,7 @@ const Wallet = () => {
                           </p>
                         </div>
                         <div className="text-right">
-                          <p className="font-semibold">${tx.total_amount.toFixed(2)}</p>
+                          <p className="font-semibold">{formatINR(tx.total_amount)}</p>
                           <p className="text-xs text-muted-foreground">{tx.status}</p>
                         </div>
                       </div>
@@ -293,11 +289,11 @@ const Wallet = () => {
             <TabsContent value="deposit">
               <div className="space-y-4">
                 <div>
-                  <Label htmlFor="deposit-amount">Amount (USD)</Label>
+                  <Label htmlFor="deposit-amount">Amount (INR)</Label>
                   <Input
                     id="deposit-amount"
                     type="number"
-                    placeholder="100.00"
+                    placeholder="1000.00"
                     value={depositAmount}
                     onChange={(e) => setDepositAmount(e.target.value)}
                   />
@@ -307,7 +303,7 @@ const Wallet = () => {
                   Deposit Funds
                 </Button>
                 <p className="text-xs text-muted-foreground">
-                  Payment integration (Stripe/Razorpay) will be available soon
+                  Payment integration (Razorpay for INR) will be available soon
                 </p>
               </div>
             </TabsContent>
@@ -315,7 +311,7 @@ const Wallet = () => {
             <TabsContent value="withdraw">
               <div className="space-y-4">
                 <div>
-                  <Label htmlFor="withdraw-amount">Amount (USD)</Label>
+                  <Label htmlFor="withdraw-amount">Amount (INR)</Label>
                   <Input
                     id="withdraw-amount"
                     type="number"
@@ -386,9 +382,7 @@ const Wallet = () => {
             )}
           </DialogContent>
         </Dialog>
-      </main>
-
-      <Footer />
+      </div>
     </div>
   );
 };

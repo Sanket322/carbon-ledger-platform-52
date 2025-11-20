@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
+import DashboardLayout from "@/layouts/DashboardLayout";
 import Index from "./pages/Index";
 import Marketplace from "./pages/Marketplace";
 import ProjectDetail from "./pages/ProjectDetail";
@@ -49,44 +50,49 @@ const App = () => (
       <BrowserRouter>
         <AuthProvider>
           <Routes>
+            {/* Public Routes */}
             <Route path="/" element={<Index />} />
-            <Route path="/marketplace" element={<Marketplace />} />
-            <Route path="/project/:id" element={<ProjectDetail />} />
             <Route path="/about" element={<About />} />
             <Route path="/how-it-works" element={<HowItWorks />} />
             <Route path="/knowledge" element={<Knowledge />} />
+            <Route path="/project/:id" element={<ProjectDetail />} />
             <Route path="/login" element={<Login />} />
             <Route path="/demo-login" element={<DemoLogin />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/signup/project-owner" element={<ProjectOwnerSignup />} />
+            <Route path="/faq" element={<FAQ />} />
+            <Route path="/documentation" element={<Documentation />} />
+            <Route path="/legal/terms" element={<Terms />} />
+            <Route path="/legal/privacy" element={<Privacy />} />
+            <Route path="/legal/refund" element={<Refund />} />
+            <Route path="/legal/disclaimer" element={<Disclaimer />} />
             
-            {/* Protected Routes */}
-              <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-              <Route path="/wallet" element={<ProtectedRoute><Wallet /></ProtectedRoute>} />
-              <Route path="/register-project" element={<ProtectedRoute><RegisterProject /></ProtectedRoute>} />
-              <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
-              <Route path="/purchase/:id" element={<ProtectedRoute><PurchaseProject /></ProtectedRoute>} />
-              <Route path="/energy" element={<ProtectedRoute><EnergyDashboard /></ProtectedRoute>} />
-              <Route path="/faq" element={<FAQ />} />
-              <Route path="/documentation" element={<Documentation />} />
-              <Route path="/legal/terms" element={<Terms />} />
-              <Route path="/legal/privacy" element={<Privacy />} />
-              <Route path="/legal/refund" element={<Refund />} />
-              <Route path="/legal/disclaimer" element={<Disclaimer />} />
+            {/* Protected Routes with Sidebar */}
+            <Route element={<ProtectedRoute><DashboardLayout /></ProtectedRoute>}>
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/marketplace" element={<Marketplace />} />
+              <Route path="/wallet" element={<Wallet />} />
+              <Route path="/profile" element={<Profile />} />
+              <Route path="/energy" element={<EnergyDashboard />} />
+              <Route path="/register-project" element={<RegisterProject />} />
+            </Route>
+            
+            {/* Protected Routes without Sidebar */}
+            <Route path="/purchase/:id" element={<ProtectedRoute><PurchaseProject /></ProtectedRoute>} />
               
-              {/* Admin Routes */}
-              <Route path="/admin" element={<ProtectedRoute><AdminLayout /></ProtectedRoute>}>
-                <Route index element={<AdminDashboard />} />
-                <Route path="users" element={<UserManagement />} />
-                <Route path="roles" element={<RoleManagement />} />
-                <Route path="projects" element={<ProjectManagement />} />
-                <Route path="certification" element={<CertificationWorkflow />} />
-                <Route path="kyc" element={<KYCManagement />} />
-                <Route path="transactions" element={<TransactionMonitoring />} />
-                <Route path="reports" element={<Reports />} />
-                <Route path="settings" element={<Settings />} />
-              </Route>
-            
+            {/* Admin Routes */}
+            <Route path="/admin" element={<ProtectedRoute><AdminLayout /></ProtectedRoute>}>
+              <Route index element={<AdminDashboard />} />
+              <Route path="users" element={<UserManagement />} />
+              <Route path="roles" element={<RoleManagement />} />
+              <Route path="projects" element={<ProjectManagement />} />
+              <Route path="certification" element={<CertificationWorkflow />} />
+              <Route path="kyc" element={<KYCManagement />} />
+              <Route path="transactions" element={<TransactionMonitoring />} />
+              <Route path="reports" element={<Reports />} />
+              <Route path="settings" element={<Settings />} />
+            </Route>
+          
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
