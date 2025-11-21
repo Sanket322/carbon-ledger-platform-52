@@ -8,18 +8,26 @@ import {
   FileCheck, 
   TrendingUp, 
   DollarSign,
-  Loader2
+  Loader2,
+  ShoppingCart,
+  Building,
+  CheckCircle
 } from "lucide-react";
 import { toast } from "sonner";
+import { formatINR } from "@/utils/currency";
 
 export default function AdminDashboard() {
   const [stats, setStats] = useState({
     totalUsers: 0,
+    totalBuyers: 0,
+    totalProjectOwners: 0,
     pendingKYC: 0,
     pendingProjects: 0,
     activeProjects: 0,
+    verifiedProjects: 0,
     totalTransactions: 0,
     totalRevenue: 0,
+    totalCreditsTraded: 0,
   });
   const [loading, setLoading] = useState(true);
   const [recentActivity, setRecentActivity] = useState<any[]>([]);
@@ -36,6 +44,17 @@ export default function AdminDashboard() {
       const { count: usersCount } = await supabase
         .from("profiles")
         .select("*", { count: "exact", head: true });
+
+      // Count buyers and project owners
+      const { count: buyersCount } = await supabase
+        .from("user_roles")
+        .select("*", { count: "exact", head: true })
+        .eq("role", "buyer");
+
+      const { count: ownersCount } = await supabase
+        .from("user_roles")
+        .select("*", { count: "exact", head: true })
+        .eq("role", "project_owner");
 
       // Fetch pending KYC count
       const { count: kycCount } = await supabase
@@ -54,7 +73,13 @@ export default function AdminDashboard() {
       const { count: activeCount } = await supabase
         .from("projects")
         .select("*", { count: "exact", head: true })
-        .in("status", ["active", "verified"]);
+        .eq("status", "active");
+
+      // Fetch verified projects count
+      const { count: verifiedCount } = await supabase
+        .from("projects")
+        .select("*", { count: "exact", head: true })
+        .eq("status", "verified");
 
       // Fetch transactions
       const { data: transactionsData, count: transCount } = await supabase
@@ -62,6 +87,7 @@ export default function AdminDashboard() {
         .select("*", { count: "exact" });
 
       const totalRevenue = transactionsData?.reduce((sum, t) => sum + Number(t.total_amount), 0) || 0;
+      const totalCreditsTraded = transactionsData?.reduce((sum, t) => sum + Number(t.credits), 0) || 0;
 
       // Fetch recent activity (last 10 transactions)
       const { data: recentTx } = await supabase
@@ -76,11 +102,15 @@ export default function AdminDashboard() {
 
       setStats({
         totalUsers: usersCount || 0,
+        totalBuyers: buyersCount || 0,
+        totalProjectOwners: ownersCount || 0,
         pendingKYC: kycCount || 0,
         pendingProjects: pendingCount || 0,
         activeProjects: activeCount || 0,
+        verifiedProjects: verifiedCount || 0,
         totalTransactions: transCount || 0,
         totalRevenue,
+        totalCreditsTraded,
       });
 
       setRecentActivity(recentTx || []);
@@ -107,28 +137,51 @@ export default function AdminDashboard() {
         <p className="text-muted-foreground">Monitor platform activity and key metrics</p>
       </div>
 
-      {/* Stats Grid */}
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+      {/* User Stats */}
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
         <StatCard
           label="Total Users"
           value={stats.totalUsers.toString()}
           icon={<Users className="h-6 w-6 text-primary" />}
         />
         <StatCard
+          label="Buyers"
+          value={stats.totalBuyers.toString()}
+          icon={<ShoppingCart className="h-6 w-6 text-primary" />}
+        />
+        <StatCard
+          label="Project Owners"
+          value={stats.totalProjectOwners.toString()}
+          icon={<Building className="h-6 w-6 text-primary" />}
+        />
+        <StatCard
           label="Pending KYC"
           value={stats.pendingKYC.toString()}
           icon={<ShieldCheck className="h-6 w-6 text-primary" />}
         />
+      </div>
+
+      {/* Project Stats */}
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
         <StatCard
           label="Pending Projects"
           value={stats.pendingProjects.toString()}
-          icon={<FileCheck className="h-6 w-6 text-primary" />}
+          icon={<FileCheck className="h-6 w-6 text-yellow-600" />}
+        />
+        <StatCard
+          label="Verified Projects"
+          value={stats.verifiedProjects.toString()}
+          icon={<CheckCircle className="h-6 w-6 text-blue-600" />}
         />
         <StatCard
           label="Active Projects"
           value={stats.activeProjects.toString()}
-          icon={<FileCheck className="h-6 w-6 text-primary" />}
+          icon={<CheckCircle className="h-6 w-6 text-green-600" />}
         />
+      </div>
+
+      {/* Financial Stats */}
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
         <StatCard
           label="Total Transactions"
           value={stats.totalTransactions.toString()}
@@ -136,8 +189,13 @@ export default function AdminDashboard() {
         />
         <StatCard
           label="Total Revenue"
-          value={`$${stats.totalRevenue.toLocaleString()}`}
+          value={formatINR(stats.totalRevenue)}
           icon={<DollarSign className="h-6 w-6 text-primary" />}
+        />
+        <StatCard
+          label="Credits Traded"
+          value={stats.totalCreditsTraded.toLocaleString()}
+          icon={<TrendingUp className="h-6 w-6 text-primary" />}
         />
       </div>
 
@@ -163,7 +221,7 @@ export default function AdminDashboard() {
                     </p>
                   </div>
                   <div className="text-right">
-                    <p className="font-semibold text-foreground">${activity.total_amount.toLocaleString()}</p>
+                    <p className="font-semibold text-foreground">{formatINR(activity.total_amount)}</p>
                     <p className="text-xs text-muted-foreground">
                       {new Date(activity.created_at).toLocaleDateString()}
                     </p>
