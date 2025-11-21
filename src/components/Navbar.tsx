@@ -71,6 +71,9 @@ const Navbar = () => {
             ) : (
               <>
                 <Button variant="ghost" asChild>
+                  <Link to="/demo-login">Try Demo</Link>
+                </Button>
+                <Button variant="ghost" asChild>
                   <Link to="/login">Login</Link>
                 </Button>
                 <Button variant="hero" asChild>
@@ -132,6 +135,11 @@ const Navbar = () => {
                     </>
                   ) : (
                     <>
+                      <Button variant="outline" asChild>
+                        <Link to="/demo-login" onClick={() => setIsOpen(false)}>
+                          Try Demo
+                        </Link>
+                      </Button>
                       <Button variant="outline" asChild>
                         <Link to="/login" onClick={() => setIsOpen(false)}>
                           Login
