@@ -1,7 +1,6 @@
 import { Outlet } from "react-router-dom";
-import { SidebarProvider } from "@/components/ui/sidebar";
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
-import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { useUserRole } from "@/hooks/useUserRole";
 
@@ -13,11 +12,16 @@ export default function DashboardLayout() {
 
   return (
     <SidebarProvider defaultOpen={true}>
-      <div className="min-h-screen flex w-full flex-col md:flex-row">
+      <div className="min-h-screen flex w-full">
         <AppSidebar userRole={primaryRole} />
-        <div className="flex flex-1 flex-col w-full">
-          <Navbar />
-          <main className="flex-1 overflow-auto bg-background">
+        <div className="flex flex-1 flex-col">
+          <header className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+            <div className="flex h-16 items-center gap-4 px-6">
+              <SidebarTrigger className="-ml-2" />
+              <h1 className="text-lg font-semibold">Dashboard</h1>
+            </div>
+          </header>
+          <main className="flex-1 p-6 overflow-auto">
             <Outlet />
           </main>
           <Footer />

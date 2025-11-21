@@ -93,8 +93,10 @@ const DemoLogin = () => {
         { email: "admin@demo.offst.ai", password: "Demo123!@#", fullName: "Demo Admin", role: "admin" }
       ];
 
+      let successCount = 0;
+      
       for (const account of accounts) {
-        const { error: signUpError } = await supabase.auth.signUp({
+        const { data, error: signUpError } = await supabase.auth.signUp({
           email: account.email,
           password: account.password,
           options: {
@@ -105,15 +107,29 @@ const DemoLogin = () => {
           }
         });
 
-        if (signUpError && !signUpError.message.includes("already registered")) {
-          throw signUpError;
+        if (signUpError) {
+          if (signUpError.message.includes("already registered")) {
+            console.log(`Account ${account.email} already exists`);
+            successCount++;
+          } else {
+            console.error(`Error creating ${account.email}:`, signUpError);
+          }
+        } else if (data.user) {
+          console.log(`Successfully created ${account.email}`);
+          successCount++;
         }
       }
 
-      toast.success("Demo accounts created successfully!", {
-        description: "You can now login with any demo account"
-      });
-      setAccountsExist(true);
+      if (successCount === accounts.length) {
+        toast.success("Demo accounts ready!", {
+          description: "All accounts are set up and ready to use"
+        });
+        setAccountsExist(true);
+      } else {
+        toast.error("Some accounts could not be created", {
+          description: "Please check console for details"
+        });
+      }
     } catch (error: any) {
       toast.error(`Failed to create demo accounts: ${error.message}`);
       console.error("Demo account creation error:", error);
