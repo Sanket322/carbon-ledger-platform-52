@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { TrendingUp, Wallet, ShoppingCart, Award, Plus, Zap } from "lucide-react";
 import { Link } from "react-router-dom";
 import { formatINR } from "@/utils/currency";
+import { OnboardingBanner } from "@/components/OnboardingBanner";
 
 const Dashboard = () => {
   const { user } = useAuth();
@@ -68,6 +69,11 @@ const Dashboard = () => {
           Your roles: {roles.join(", ") || "buyer"}
         </p>
       </div>
+
+      {/* Onboarding Banner */}
+      <OnboardingBanner 
+        userType={isProjectOwner ? "project_owner" : isBuyer ? "buyer" : "guest"} 
+      />
 
       {/* Stats Grid */}
       <div className="mb-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">

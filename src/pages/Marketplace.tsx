@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -103,9 +104,17 @@ const Marketplace = () => {
               Carbon Credit Marketplace
             </h1>
             <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
-              Browse verified carbon offset projects from around India. Support sustainable initiatives
-              and offset your carbon footprint.
+              Browse verified carbon offset projects from India and worldwide. All credits are verified by 
+              international registries (UCR, Verra, Gold Standard).
             </p>
+            <div className="mt-4 flex flex-wrap items-center justify-center gap-2 text-sm text-muted-foreground">
+              <span>💡 <strong>How it works:</strong></span>
+              <span>1 credit = 1 ton CO₂ offset</span>
+              <span>•</span>
+              <span>Pay in INR</span>
+              <span>•</span>
+              <Link to="/how-it-works" className="text-primary hover:underline">Learn more</Link>
+            </div>
           </div>
 
           {/* Search and Filter */}
@@ -114,16 +123,16 @@ const Marketplace = () => {
               <div className="relative flex-1">
                 <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                 <Input
-                  placeholder="Search projects by name, location, or type..."
+                  placeholder="Search by project name, location (e.g., India, Maharashtra)..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="pl-10"
                 />
               </div>
-              <Button variant="outline" size="icon">
-                <SlidersHorizontal className="h-4 w-4" />
-              </Button>
             </div>
+            <p className="text-xs text-muted-foreground">
+              💡 <strong>Tip:</strong> Use filters below to find projects by type (Solar, Wind) or registry (UCR, Verra)
+            </p>
 
             {/* Filter Chips */}
             <div className="flex flex-wrap gap-2">
