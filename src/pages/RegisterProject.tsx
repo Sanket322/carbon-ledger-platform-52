@@ -16,6 +16,7 @@ import { Progress } from "@/components/ui/progress";
 import { AlertCircle, CheckCircle2, Upload, Loader2 } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { toast } from "sonner";
+import { HelpTooltip } from "@/components/HelpTooltip";
 
 const steps = [
   "Company & Project Info",
@@ -311,22 +312,29 @@ export default function RegisterProject() {
                   </div>
                 </div>
                 <div>
-                  <Label htmlFor="title">Project Title *</Label>
+                  <Label htmlFor="title" className="flex items-center gap-2">
+                    Project Title *
+                    <HelpTooltip content="Give your project a clear, descriptive name. Example: 'Solar Power Plant - Maharashtra 50MW'" />
+                  </Label>
                   <Input
                     id="title"
                     value={formData.title}
                     onChange={(e) => updateField("title", e.target.value)}
+                    placeholder="e.g., Solar Power Plant - Maharashtra 50MW"
                     required
                   />
                 </div>
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div>
-                    <Label htmlFor="location_country">Country *</Label>
+                    <Label htmlFor="location_country" className="flex items-center gap-2">
+                      Country *
+                      <HelpTooltip content="Enter the country where your project is located" />
+                    </Label>
                     <Input
                       id="location_country"
                       value={formData.location_country}
                       onChange={(e) => updateField("location_country", e.target.value)}
-                      placeholder="Enter country"
+                      placeholder="e.g., India"
                     />
                   </div>
                   <div>

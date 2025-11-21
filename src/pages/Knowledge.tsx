@@ -19,22 +19,22 @@ export default function Knowledge() {
       icon: <BookOpen className="h-5 w-5" />,
       articles: [
         {
-          title: "What are Carbon Credits?",
-          description: "Learn the basics of carbon credits and how they work in the marketplace",
+          title: "What are Carbon Credits? (Simple Guide)",
+          description: "Easy explanation: Think of carbon credits like certificates. 1 credit = 1 ton of CO₂ removed from the air.",
           tags: ["Basics", "Carbon Credits"],
-          content: "Carbon credits are permits that represent the right to emit one ton of carbon dioxide or an equivalent amount of another greenhouse gas. Organizations and individuals can purchase carbon credits to offset their carbon footprint..."
+          content: "Carbon credits are like certificates that prove you've helped reduce pollution.\n\n🌍 Simple Example:\nIf your business emits 100 tons of CO₂ per year, you can buy 100 carbon credits to become 'carbon neutral'. These credits come from projects that reduce or capture CO₂ (like solar farms or tree planting).\n\n💰 In India:\n- Credits are priced in INR (₹)\n- 1 credit = 1 ton of CO₂ offset\n- Projects are verified by international bodies (UCR, Verra, Gold Standard)"
         },
         {
-          title: "How to Buy Carbon Credits",
-          description: "Step-by-step guide to purchasing carbon credits on our platform",
+          title: "How to Buy Credits in 3 Easy Steps",
+          description: "Simple process: Sign up → Browse projects → Buy with INR → Get certificate",
           tags: ["Tutorial", "Buying"],
-          content: "1. Create an account and complete KYC verification\n2. Add funds to your wallet\n3. Browse the marketplace for verified projects\n4. Select the project and number of credits\n5. Complete your purchase..."
+          content: "**Step 1: Sign Up (2 minutes)**\n- Click 'Sign Up' → Enter your details → Verify email\n\n**Step 2: Browse Projects**\n- Go to Marketplace → See Indian & global projects\n- Filter by type: Solar, Wind, Forest\n- Check price per ton in INR\n\n**Step 3: Buy & Get Certificate**\n- Choose how many tons to offset\n- Pay in INR (UPI/Card/Net Banking coming soon)\n- Instant retirement certificate with QR code"
         },
         {
-          title: "Understanding Project Types",
-          description: "Different types of carbon offset projects and their impact",
+          title: "Types of Projects (Explained Simply)",
+          description: "Different ways to reduce CO₂: Solar panels, planting trees, wind farms, etc.",
           tags: ["Projects", "Categories"],
-          content: "Our platform features various project types:\n- Renewable Energy: Solar, wind, and hydroelectric projects\n- Forestry & Land Use: Reforestation and forest conservation\n- Energy Efficiency: Projects that reduce energy consumption\n- Waste Management: Methane capture and waste-to-energy..."
+          content: "**☀️ Solar/Wind Projects (Renewable Energy)**\nClean electricity instead of coal/diesel. Common in India.\n\n**🌳 Forest Projects (Tree Planting)**\nTrees absorb CO₂. Popular in rural India.\n\n**⚡ Energy Efficiency**\nUsing less power to do the same work.\n\n**♻️ Waste Management**\nConverting garbage into energy or capturing methane gas."
         },
       ],
     },
@@ -159,10 +159,27 @@ export default function Knowledge() {
       <div className="container mx-auto px-4 py-12">
         {/* Header */}
         <div className="mb-12 text-center">
-          <h1 className="mb-4 text-4xl font-bold text-foreground">Knowledge Base</h1>
-          <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
-            Everything you need to know about carbon credits, our platform, and sustainable impact
+          <Badge className="mb-4 bg-primary/10 text-primary">
+            Knowledge Center
+          </Badge>
+          <h1 className="mb-4 text-4xl font-bold text-foreground">Learn About Carbon Credits</h1>
+          <p className="mx-auto max-w-2xl text-lg text-muted-foreground mb-6">
+            Simple guides in plain language. No jargon. Learn how carbon credits work, how to buy them in India, and make a real environmental impact.
           </p>
+          <div className="flex flex-wrap items-center justify-center gap-4 text-sm">
+            <div className="flex items-center gap-2 bg-card rounded-lg px-4 py-2 border">
+              <span>🇮🇳</span>
+              <span>Indian Context</span>
+            </div>
+            <div className="flex items-center gap-2 bg-card rounded-lg px-4 py-2 border">
+              <span>💰</span>
+              <span>Prices in INR</span>
+            </div>
+            <div className="flex items-center gap-2 bg-card rounded-lg px-4 py-2 border">
+              <span>✅</span>
+              <span>Easy to Understand</span>
+            </div>
+          </div>
         </div>
 
         {/* Search */}
@@ -170,7 +187,7 @@ export default function Knowledge() {
           <div className="relative mx-auto max-w-2xl">
             <Search className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
             <Input
-              placeholder="Search articles, guides, and FAQs..."
+              placeholder="Search for 'how to buy', 'what is carbon credit', 'pricing in INR'..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-10"

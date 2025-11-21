@@ -80,19 +80,23 @@ const Index = () => {
               Trade Verified Carbon Credits with Confidence
             </h1>
             <p className="mb-8 text-lg text-primary-foreground/90 md:text-xl">
-              Join the leading platform connecting project owners, traders, and buyers in the global carbon market. 
-              Transparent, secure, and backed by internationally recognized registries.
+              India's trusted platform for carbon credit trading. Buy verified credits from Indian projects, 
+              register your renewable energy project, or retire credits to offset your carbon footprint. 
+              Simple, secure, and compliant with UCR, Verra, and Gold Standard.
             </p>
             <div className="flex flex-col gap-4 sm:flex-row sm:justify-center">
               <Button variant="hero" size="xl" asChild>
                 <Link to="/marketplace">
-                  Explore Marketplace <ArrowRight className="ml-2 h-5 w-5" />
+                  Browse Projects <ArrowRight className="ml-2 h-5 w-5" />
                 </Link>
               </Button>
               <Button variant="outline-primary" size="xl" asChild className="bg-background/10 backdrop-blur-sm">
-                <Link to="/signup">Register Project</Link>
+                <Link to="/signup/project-owner">I Have a Project</Link>
               </Button>
             </div>
+            <p className="mt-4 text-sm text-primary-foreground/80">
+              New to carbon credits? <Link to="/knowledge" className="underline hover:text-primary-foreground">Learn how it works</Link> • <Link to="/demo-login" className="underline hover:text-primary-foreground">Try our demo</Link>
+            </p>
           </div>
         </div>
       </section>

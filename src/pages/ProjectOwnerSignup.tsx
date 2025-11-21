@@ -74,7 +74,10 @@ const ProjectOwnerSignup = () => {
           </div>
           <h1 className="mb-2 text-2xl font-bold text-foreground">Create Project Owner Account</h1>
           <p className="text-sm text-muted-foreground">
-            Register and manage carbon credit projects
+            Register your renewable energy or sustainability project. Get verified and sell carbon credits in INR.
+          </p>
+          <p className="mt-2 text-xs text-muted-foreground">
+            🌱 UCR/Verra/Gold Standard verification • 💰 Sell in INR • 📊 Real-time analytics
           </p>
         </div>
 
@@ -121,11 +124,14 @@ const ProjectOwnerSignup = () => {
               <Input
                 id="phone"
                 type="tel"
-                placeholder="+1 (555) 000-0000"
+                placeholder="+91 98765 43210"
                 value={formData.phone}
                 onChange={(e) => handleChange("phone", e.target.value)}
                 required
               />
+              <p className="text-xs text-muted-foreground">
+                Include country code for India: +91
+              </p>
             </div>
           </div>
 
@@ -134,7 +140,7 @@ const ProjectOwnerSignup = () => {
             <Input
               id="country"
               type="text"
-              placeholder="United States"
+              placeholder="e.g., India"
               value={formData.country}
               onChange={(e) => handleChange("country", e.target.value)}
               required

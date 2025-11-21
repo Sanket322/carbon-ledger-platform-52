@@ -65,7 +65,10 @@ const Signup = () => {
         <div className="mb-6 text-center">
           <h1 className="mb-2 text-2xl font-bold text-foreground">Create Buyer Account</h1>
           <p className="text-sm text-muted-foreground">
-            Purchase and retire carbon credits to offset your emissions
+            Purchase verified carbon credits from Indian & global projects. Pay in INR and get instant certificates.
+          </p>
+          <p className="mt-2 text-xs text-muted-foreground">
+            ⚡ Quick setup • 💳 Pay in INR • 📜 Instant certificates
           </p>
         </div>
 
@@ -96,14 +99,17 @@ const Signup = () => {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="phone">Phone Number</Label>
+              <Label htmlFor="phone">Phone Number (Optional)</Label>
               <Input
                 id="phone"
                 type="tel"
-                placeholder="+1 (555) 000-0000"
+                placeholder="+91 98765 43210"
                 value={formData.phone}
                 onChange={(e) => handleChange("phone", e.target.value)}
               />
+              <p className="text-xs text-muted-foreground">
+                Include country code for India: +91
+              </p>
             </div>
           </div>
 
