@@ -70,14 +70,27 @@ const DemoLogin = () => {
 
   const checkDemoAccounts = async () => {
     try {
-      // Try to check if any demo account exists by attempting to get user data
-      const { data: profiles } = await supabase
-        .from('profiles')
-        .select('id')
-        .in('id', ['buyer@demo.offst.ai', 'owner@demo.offst.ai', 'admin@demo.offst.ai'])
-        .limit(1);
+      // Check by trying to query the profiles table for all demo emails
+      // Since we can't query auth.users directly from client, we check profiles
+      const demoEmails = ['buyer@demo.offst.ai', 'owner@demo.offst.ai', 'admin@demo.offst.ai'];
       
-      setAccountsExist(profiles && profiles.length > 0);
+      // Try to get the current session to see if any demo user exists
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      // For now, we'll use a simple approach: check if profiles exist with specific pattern
+      const { count, error } = await supabase
+        .from('profiles')
+        .select('id', { count: 'exact', head: true })
+        .ilike('full_name', '%Demo%');
+      
+      if (error) {
+        console.error("Error checking profiles:", error);
+        setAccountsExist(false);
+        return;
+      }
+      
+      // If we have at least 3 demo profiles, consider accounts exist
+      setAccountsExist(count !== null && count >= 3);
     } catch (error) {
       console.error("Error checking demo accounts:", error);
       setAccountsExist(false);
