@@ -281,12 +281,6 @@ export default function Knowledge() {
               </CardHeader>
               <CardContent className="space-y-3">
                 <Button variant="outline" className="w-full justify-between" asChild>
-                  <a href="https://docs.decarb.earth" target="_blank" rel="noopener noreferrer">
-                    <span>Decarb.earth Documentation</span>
-                    <ExternalLink className="h-4 w-4" />
-                  </a>
-                </Button>
-                <Button variant="outline" className="w-full justify-between" asChild>
                   <a href="https://verra.org" target="_blank" rel="noopener noreferrer">
                     <span>Verra Registry</span>
                     <ExternalLink className="h-4 w-4" />

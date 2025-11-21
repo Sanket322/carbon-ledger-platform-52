@@ -235,7 +235,7 @@ export default function RegisterProject() {
         <div className="mb-8">
           <h1 className="mb-2 text-3xl font-bold text-foreground">Register Carbon Credit Project</h1>
           <p className="text-muted-foreground">
-            Follow the Decarb.earth certification procedure - Step {currentStep + 1} of {steps.length}
+            Complete the certification process - Step {currentStep + 1} of {steps.length}
           </p>
         </div>
 
