@@ -63,114 +63,241 @@ const Index = () => {
     <div className="min-h-screen bg-background">
       <Navbar />
 
-      {/* Hero Section */}
-      <section className="relative overflow-hidden">
-        <div
-          className="absolute inset-0 bg-cover bg-center opacity-10"
-          style={{ backgroundImage: `url(${heroBg})` }}
-        />
-        <div className="absolute inset-0 bg-gradient-hero opacity-90" />
+      {/* Hero Section - Enhanced */}
+      <section className="relative overflow-hidden bg-gradient-to-br from-primary via-primary/95 to-primary/90 min-h-[90vh] flex items-center">
+        {/* Animated Background Elements */}
+        <div className="absolute inset-0 overflow-hidden">
+          <div
+            className="absolute inset-0 bg-cover bg-center opacity-5"
+            style={{ backgroundImage: `url(${heroBg})` }}
+          />
+          {/* Floating Orbs */}
+          <div className="absolute top-20 left-10 w-72 h-72 bg-primary-light/30 rounded-full blur-3xl animate-pulse" />
+          <div className="absolute bottom-20 right-10 w-96 h-96 bg-accent/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: "1s" }} />
+          <div className="absolute top-1/2 left-1/3 w-64 h-64 bg-success/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: "2s" }} />
+        </div>
         
-        <div className="container relative mx-auto px-4 py-24 md:py-32">
-          <div className="mx-auto max-w-4xl text-center">
-            <Badge className="mb-6 bg-primary-light/20 px-4 py-1 text-primary-foreground backdrop-blur-sm">
-              Trusted Carbon Credit Marketplace
-            </Badge>
-            <h1 className="mb-6 text-4xl font-bold leading-tight text-primary-foreground md:text-6xl">
-              Trade Verified Carbon Credits with Confidence
-            </h1>
-            <p className="mb-8 text-lg text-primary-foreground/90 md:text-xl">
-              India's trusted platform for carbon credit trading. Buy verified credits from Indian projects, 
-              register your renewable energy project, or retire credits to offset your carbon footprint. 
-              Simple, secure, and compliant with UCR, Verra, and Gold Standard.
-            </p>
-            <div className="flex flex-col gap-4 sm:flex-row sm:justify-center">
-              <Button variant="hero" size="xl" asChild>
-                <Link to="/marketplace">
-                  Browse Projects <ArrowRight className="ml-2 h-5 w-5" />
-                </Link>
-              </Button>
-              <Button variant="outline-primary" size="xl" asChild className="bg-background/10 backdrop-blur-sm">
-                <Link to="/signup/project-owner">I Have a Project</Link>
-              </Button>
+        <div className="container relative mx-auto px-4 py-20">
+          <div className="mx-auto max-w-5xl">
+            {/* Trust Badges */}
+            <div className="mb-8 flex flex-wrap items-center justify-center gap-3 animate-fade-in">
+              <Badge className="bg-white/20 text-white backdrop-blur-md border-white/30 px-4 py-2 text-sm font-medium">
+                🏆 UCR Verified
+              </Badge>
+              <Badge className="bg-white/20 text-white backdrop-blur-md border-white/30 px-4 py-2 text-sm font-medium">
+                ✓ Verra Approved
+              </Badge>
+              <Badge className="bg-white/20 text-white backdrop-blur-md border-white/30 px-4 py-2 text-sm font-medium">
+                🌟 Gold Standard
+              </Badge>
             </div>
-            <p className="mt-4 text-sm text-primary-foreground/80">
-              New to carbon credits? <Link to="/knowledge" className="underline hover:text-primary-foreground">Learn how it works</Link> • <Link to="/demo-login" className="underline hover:text-primary-foreground">Try our demo</Link>
-            </p>
+
+            {/* Main Headline */}
+            <div className="text-center animate-fade-in" style={{ animationDelay: "0.2s" }}>
+              <h1 className="mb-6 text-5xl font-extrabold leading-tight text-white md:text-7xl tracking-tight">
+                India's Leading
+                <br />
+                <span className="bg-gradient-to-r from-green-200 to-emerald-200 bg-clip-text text-transparent">
+                  Carbon Credit Marketplace
+                </span>
+              </h1>
+              
+              <p className="mb-8 text-xl text-white/95 md:text-2xl font-light max-w-3xl mx-auto leading-relaxed">
+                Buy verified carbon credits in INR. Support renewable energy projects across India. 
+                Get instant retirement certificates. Make your business carbon neutral today.
+              </p>
+
+              {/* Key Features */}
+              <div className="mb-10 flex flex-wrap items-center justify-center gap-6 text-white/90">
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="h-5 w-5 text-green-200" />
+                  <span className="text-sm font-medium">Pay in ₹ INR</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="h-5 w-5 text-green-200" />
+                  <span className="text-sm font-medium">Instant Certificates</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="h-5 w-5 text-green-200" />
+                  <span className="text-sm font-medium">100% Verified Projects</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="h-5 w-5 text-green-200" />
+                  <span className="text-sm font-medium">No Hidden Fees</span>
+                </div>
+              </div>
+
+              {/* CTA Buttons */}
+              <div className="flex flex-col gap-4 sm:flex-row sm:justify-center mb-8">
+                <Button 
+                  variant="default" 
+                  size="xl" 
+                  asChild 
+                  className="bg-white text-primary hover:bg-white/90 shadow-2xl hover-scale font-semibold text-lg px-8 py-6"
+                >
+                  <Link to="/marketplace">
+                    Browse Projects <ArrowRight className="ml-2 h-5 w-5" />
+                  </Link>
+                </Button>
+                <Button 
+                  variant="outline" 
+                  size="xl" 
+                  asChild 
+                  className="border-2 border-white text-white hover:bg-white/10 backdrop-blur-sm font-semibold text-lg px-8 py-6"
+                >
+                  <Link to="/signup/project-owner">
+                    Register Your Project
+                  </Link>
+                </Button>
+              </div>
+
+              {/* Help Links */}
+              <div className="flex flex-wrap items-center justify-center gap-6 text-sm text-white/80">
+                <Link to="/knowledge" className="flex items-center gap-2 hover:text-white transition-colors story-link">
+                  <Lightbulb className="h-4 w-4" />
+                  <span>New to carbon credits?</span>
+                </Link>
+                <span className="text-white/40">•</span>
+                <Link to="/demo-login" className="flex items-center gap-2 hover:text-white transition-colors story-link">
+                  <Users className="h-4 w-4" />
+                  <span>Try Demo Account</span>
+                </Link>
+                <span className="text-white/40">•</span>
+                <Link to="/how-it-works" className="flex items-center gap-2 hover:text-white transition-colors story-link">
+                  <Target className="h-4 w-4" />
+                  <span>How it works</span>
+                </Link>
+              </div>
+            </div>
+
+            {/* Stats Bar */}
+            <div className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-6 animate-fade-in" style={{ animationDelay: "0.4s" }}>
+              <div className="text-center">
+                <div className="text-3xl md:text-4xl font-bold text-white mb-1">1.2M+</div>
+                <div className="text-sm text-white/70">Tons CO₂ Offset</div>
+              </div>
+              <div className="text-center">
+                <div className="text-3xl md:text-4xl font-bold text-white mb-1">5,847</div>
+                <div className="text-sm text-white/70">Credits Traded</div>
+              </div>
+              <div className="text-center">
+                <div className="text-3xl md:text-4xl font-bold text-white mb-1">234</div>
+                <div className="text-sm text-white/70">Active Projects</div>
+              </div>
+              <div className="text-center">
+                <div className="text-3xl md:text-4xl font-bold text-white mb-1">48</div>
+                <div className="text-sm text-white/70">Countries</div>
+              </div>
+            </div>
           </div>
+        </div>
+
+        {/* Bottom Wave */}
+        <div className="absolute bottom-0 left-0 right-0">
+          <svg viewBox="0 0 1440 120" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full">
+            <path d="M0 0L60 10C120 20 240 40 360 46.7C480 53 600 47 720 43.3C840 40 960 40 1080 46.7C1200 53 1320 67 1380 73.3L1440 80V120H1380C1320 120 1200 120 1080 120C960 120 840 120 720 120C600 120 480 120 360 120C240 120 120 120 60 120H0V0Z" fill="hsl(var(--background))" fillOpacity="1"/>
+          </svg>
         </div>
       </section>
 
-      {/* Stats Section */}
-      <section className="container mx-auto px-4 py-16">
+      {/* Stats Section - Enhanced */}
+      <section className="container mx-auto px-4 -mt-20 relative z-10">
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
-          {stats.map((stat) => (
-            <StatCard key={stat.label} {...stat} />
+          {stats.map((stat, index) => (
+            <Card 
+              key={stat.label} 
+              className="hover-scale bg-card border-border shadow-lg hover:shadow-xl transition-all animate-fade-in"
+              style={{ animationDelay: `${index * 0.1}s` }}
+            >
+              <div className="p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="p-3 rounded-lg bg-primary/10">
+                    {stat.icon}
+                  </div>
+                  {stat.trend && (
+                    <Badge variant="outline" className="text-xs">
+                      {stat.trend}
+                    </Badge>
+                  )}
+                </div>
+                <div className="text-3xl font-bold text-foreground mb-1">{stat.value}</div>
+                <div className="text-sm text-muted-foreground">{stat.label}</div>
+              </div>
+            </Card>
           ))}
         </div>
       </section>
 
-      {/* Features Section */}
-      <section className="bg-muted/30 py-16">
+      {/* Features Section - Enhanced */}
+      <section className="bg-muted/30 py-20">
         <div className="container mx-auto px-4">
-          <div className="mb-12 text-center">
-            <h2 className="mb-4 text-3xl font-bold text-foreground md:text-4xl">
+          <div className="mb-16 text-center animate-fade-in">
+            <Badge className="mb-4 bg-primary/10 text-primary px-4 py-1">
+              Why Choose Us
+            </Badge>
+            <h2 className="mb-4 text-4xl font-bold text-foreground md:text-5xl">
               Why Choose Offst.AI?
             </h2>
-            <p className="mx-auto max-w-2xl text-muted-foreground">
-              A comprehensive platform designed for transparency, efficiency, and trust in carbon credit trading.
+            <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
+              India's most trusted carbon credit platform with verified projects, transparent pricing, and instant certificates.
             </p>
           </div>
 
           <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
-            {features.map((feature) => (
+            {features.map((feature, index) => (
               <Card
                 key={feature.title}
-                className="border-border bg-card p-6 transition-all hover:shadow-lg"
+                className="group hover-scale border-border bg-card p-6 transition-all hover:shadow-xl hover:border-primary/50 animate-fade-in"
+                style={{ animationDelay: `${index * 0.1}s` }}
               >
-                <div className="mb-4 inline-flex rounded-lg bg-primary/10 p-3">
-                  <feature.icon className="h-6 w-6 text-primary" />
+                <div className="mb-4 inline-flex rounded-lg bg-primary/10 p-4 group-hover:bg-primary/20 transition-colors">
+                  <feature.icon className="h-7 w-7 text-primary" />
                 </div>
-                <h3 className="mb-2 text-lg font-semibold text-foreground">
+                <h3 className="mb-3 text-xl font-semibold text-foreground">
                   {feature.title}
                 </h3>
-                <p className="text-sm text-muted-foreground">{feature.description}</p>
+                <p className="text-sm text-muted-foreground leading-relaxed">{feature.description}</p>
               </Card>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Project Types */}
-      <section className="py-16">
+      {/* Project Types - Enhanced */}
+      <section className="py-20">
         <div className="container mx-auto px-4">
-          <div className="mb-12 text-center">
-            <h2 className="mb-4 text-3xl font-bold text-foreground md:text-4xl">
+          <div className="mb-16 text-center animate-fade-in">
+            <Badge className="mb-4 bg-success/10 text-success px-4 py-1">
+              Project Categories
+            </Badge>
+            <h2 className="mb-4 text-4xl font-bold text-foreground md:text-5xl">
               Diverse Project Portfolio
             </h2>
-            <p className="mx-auto max-w-2xl text-muted-foreground">
-              Explore verified carbon offset projects across multiple categories and regions.
+            <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
+              From renewable energy to reforestation—explore verified carbon offset projects across India and worldwide.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {projectTypes.map((type) => (
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            {projectTypes.map((type, index) => (
               <Card
                 key={type.name}
-                className="group cursor-pointer overflow-hidden border-border bg-card transition-all hover:shadow-lg"
+                className="group relative overflow-hidden border-border bg-card transition-all hover:shadow-2xl hover-scale animate-fade-in"
+                style={{ animationDelay: `${index * 0.1}s` }}
               >
-                <div className="p-6">
-                  <div className={`mb-4 h-2 w-16 rounded-full ${type.color}`} />
-                  <h3 className="mb-2 text-xl font-semibold text-foreground">{type.name}</h3>
-                  <p className="text-sm text-muted-foreground">{type.count} Active Projects</p>
+                <div className={`absolute inset-0 ${type.color} opacity-5 group-hover:opacity-10 transition-opacity`} />
+                <div className="relative p-6">
+                  <div className={`mb-4 h-2 w-20 rounded-full ${type.color}`} />
+                  <h3 className="mb-2 text-2xl font-semibold text-foreground">{type.name}</h3>
+                  <p className="text-sm text-muted-foreground mb-4">{type.count} Active Projects</p>
                 </div>
-                <div className="bg-muted/50 px-6 py-4">
+                <div className="relative bg-muted/50 px-6 py-4 border-t">
                   <Link
                     to="/marketplace"
-                    className="flex items-center text-sm font-medium text-primary group-hover:gap-2"
+                    className="flex items-center text-sm font-medium text-primary group-hover:gap-2 transition-all"
                   >
                     Explore Projects
-                    <ArrowRight className="ml-1 h-4 w-4 transition-all" />
+                    <ArrowRight className="ml-1 h-4 w-4 group-hover:translate-x-1 transition-transform" />
                   </Link>
                 </div>
               </Card>
@@ -346,24 +473,60 @@ const Index = () => {
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="py-16">
+      {/* CTA Section - Enhanced */}
+      <section className="py-20">
         <div className="container mx-auto px-4">
-          <Card className="overflow-hidden border-border bg-gradient-hero">
-            <div className="px-6 py-12 text-center md:px-12">
-              <h2 className="mb-4 text-3xl font-bold text-primary-foreground md:text-4xl">
+          <Card className="relative overflow-hidden border-0 bg-gradient-to-br from-primary via-primary/95 to-primary/90 shadow-2xl">
+            {/* Background Pattern */}
+            <div className="absolute inset-0 opacity-10">
+              <div className="absolute top-10 right-10 w-64 h-64 bg-white rounded-full blur-3xl" />
+              <div className="absolute bottom-10 left-10 w-96 h-96 bg-accent rounded-full blur-3xl" />
+            </div>
+            
+            <div className="relative px-6 py-16 text-center md:px-12 md:py-20">
+              <Badge className="mb-6 bg-white/20 text-white backdrop-blur-md border-white/30 px-4 py-2">
+                Join 1000+ Organizations
+              </Badge>
+              <h2 className="mb-6 text-4xl font-bold text-white md:text-5xl">
                 Ready to Make an Impact?
               </h2>
-              <p className="mx-auto mb-8 max-w-2xl text-lg text-primary-foreground/90">
-                Join thousands of organizations and individuals trading verified carbon credits on Offst.AI.
+              <p className="mx-auto mb-10 max-w-2xl text-lg text-white/95 leading-relaxed">
+                Join thousands of organizations and individuals offsetting their carbon footprint. 
+                Start your journey to carbon neutrality today with verified credits in INR.
               </p>
               <div className="flex flex-col gap-4 sm:flex-row sm:justify-center">
-                <Button variant="hero" size="xl" asChild className="bg-card text-foreground hover:bg-card/90">
+                <Button 
+                  variant="default" 
+                  size="xl" 
+                  asChild 
+                  className="bg-white text-primary hover:bg-white/90 shadow-xl hover-scale font-semibold text-lg px-8"
+                >
                   <Link to="/signup">Get Started Today</Link>
                 </Button>
-                <Button variant="outline-primary" size="xl" asChild className="border-primary-foreground text-primary-foreground hover:bg-primary-foreground/10">
+                <Button 
+                  variant="outline" 
+                  size="xl" 
+                  asChild 
+                  className="border-2 border-white text-white hover:bg-white/10 backdrop-blur-sm font-semibold text-lg px-8"
+                >
                   <Link to="/marketplace">Browse Projects</Link>
                 </Button>
+              </div>
+              
+              {/* Trust Indicators */}
+              <div className="mt-12 flex flex-wrap items-center justify-center gap-8 text-white/80">
+                <div className="flex items-center gap-2">
+                  <Shield className="h-5 w-5" />
+                  <span className="text-sm">100% Secure</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="h-5 w-5" />
+                  <span className="text-sm">Verified Projects</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Globe className="h-5 w-5" />
+                  <span className="text-sm">Global Standards</span>
+                </div>
               </div>
             </div>
           </Card>

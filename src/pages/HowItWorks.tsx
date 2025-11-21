@@ -87,17 +87,24 @@ const HowItWorks = () => {
     <div className="min-h-screen bg-background">
       <Navbar />
 
-      {/* Hero Section */}
-      <section className="bg-gradient-hero py-20">
-        <div className="container mx-auto px-4 text-center">
-          <Badge className="mb-4 bg-primary-light/20 px-4 py-1 text-primary-foreground">
+      {/* Hero Section - Enhanced */}
+      <section className="relative bg-gradient-to-br from-primary via-primary/95 to-primary/90 py-24 overflow-hidden">
+        {/* Background Effects */}
+        <div className="absolute inset-0">
+          <div className="absolute top-20 left-20 w-72 h-72 bg-primary-light/20 rounded-full blur-3xl animate-pulse" />
+          <div className="absolute bottom-20 right-20 w-96 h-96 bg-accent/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: "1s" }} />
+        </div>
+        
+        <div className="container relative mx-auto px-4 text-center">
+          <Badge className="mb-6 bg-white/20 text-white backdrop-blur-md border-white/30 px-4 py-2 animate-fade-in">
             Understanding Carbon Credits
           </Badge>
-          <h1 className="mb-6 text-4xl font-bold text-primary-foreground md:text-5xl">
+          <h1 className="mb-6 text-5xl font-bold text-white md:text-6xl animate-fade-in" style={{ animationDelay: "0.1s" }}>
             How Carbon Credits Work
           </h1>
-          <p className="mx-auto max-w-3xl text-lg text-primary-foreground/90">
-            A transparent, verified process from project creation to environmental impact
+          <p className="mx-auto max-w-3xl text-xl text-white/95 leading-relaxed animate-fade-in" style={{ animationDelay: "0.2s" }}>
+            A transparent, verified process from project creation to environmental impact. 
+            Learn how carbon credits help fight climate change step by step.
           </p>
         </div>
       </section>

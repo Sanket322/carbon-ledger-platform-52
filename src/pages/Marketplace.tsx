@@ -7,7 +7,7 @@ import ProjectCard from "@/components/ProjectCard";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Search, SlidersHorizontal, Loader2 } from "lucide-react";
+import { Search, SlidersHorizontal, Loader2, CheckCircle2, Lightbulb } from "lucide-react";
 import { toast } from "sonner";
 import { formatCreditPrice } from "@/utils/currency";
 import projectSolar from "@/assets/project-solar.jpg";
@@ -96,24 +96,43 @@ const Marketplace = () => {
     <div className="min-h-screen bg-background">
       <Navbar />
 
-      {/* Hero Section */}
-      <section className="border-b bg-gradient-to-b from-primary/5 to-background py-12">
-        <div className="container mx-auto px-4">
-          <div className="mb-8 text-center">
-            <h1 className="mb-4 text-4xl font-bold text-foreground">
+      {/* Hero Section - Enhanced */}
+      <section className="relative border-b bg-gradient-to-br from-primary/10 via-background to-accent/5 py-16 overflow-hidden">
+        {/* Decorative Elements */}
+        <div className="absolute top-10 right-10 w-64 h-64 bg-primary/5 rounded-full blur-3xl" />
+        <div className="absolute bottom-10 left-10 w-96 h-96 bg-accent/5 rounded-full blur-3xl" />
+        
+        <div className="container relative mx-auto px-4">
+          <div className="mb-8 text-center animate-fade-in">
+            <Badge className="mb-4 bg-primary/10 text-primary px-4 py-2">
+              Verified Projects
+            </Badge>
+            <h1 className="mb-6 text-5xl font-bold text-foreground">
               Carbon Credit Marketplace
             </h1>
-            <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
+            <p className="mx-auto max-w-3xl text-lg text-muted-foreground mb-6">
               Browse verified carbon offset projects from India and worldwide. All credits are verified by 
-              international registries (UCR, Verra, Gold Standard).
+              international registries (UCR, Verra, Gold Standard). Pay in INR and get instant certificates.
             </p>
-            <div className="mt-4 flex flex-wrap items-center justify-center gap-2 text-sm text-muted-foreground">
-              <span>💡 <strong>How it works:</strong></span>
-              <span>1 credit = 1 ton CO₂ offset</span>
-              <span>•</span>
-              <span>Pay in INR</span>
-              <span>•</span>
-              <Link to="/how-it-works" className="text-primary hover:underline">Learn more</Link>
+            
+            {/* Quick Info */}
+            <div className="flex flex-wrap items-center justify-center gap-6 text-sm">
+              <div className="flex items-center gap-2 bg-card rounded-lg px-4 py-2 border shadow-sm">
+                <CheckCircle2 className="h-4 w-4 text-success" />
+                <span className="font-medium">1 credit = 1 ton CO₂</span>
+              </div>
+              <div className="flex items-center gap-2 bg-card rounded-lg px-4 py-2 border shadow-sm">
+                <span>💰</span>
+                <span className="font-medium">Pay in INR</span>
+              </div>
+              <div className="flex items-center gap-2 bg-card rounded-lg px-4 py-2 border shadow-sm">
+                <span>⚡</span>
+                <span className="font-medium">Instant certificates</span>
+              </div>
+              <Link to="/how-it-works" className="flex items-center gap-2 text-primary hover:underline font-medium">
+                <Lightbulb className="h-4 w-4" />
+                Learn how it works
+              </Link>
             </div>
           </div>
 
