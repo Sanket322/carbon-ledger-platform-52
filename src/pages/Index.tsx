@@ -64,65 +64,64 @@ const Index = () => {
       <Navbar />
 
       {/* Hero Section - Enhanced */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-primary via-primary/95 to-primary/90 min-h-[90vh] flex items-center">
+      <section className="relative overflow-hidden bg-gradient-hero min-h-[90vh] flex items-center">
         {/* Animated Background Elements */}
         <div className="absolute inset-0 overflow-hidden">
           <div
             className="absolute inset-0 bg-cover bg-center opacity-5"
             style={{ backgroundImage: `url(${heroBg})` }}
           />
-          {/* Floating Orbs */}
           <div className="absolute top-20 left-10 w-72 h-72 bg-primary-light/30 rounded-full blur-3xl animate-pulse" />
           <div className="absolute bottom-20 right-10 w-96 h-96 bg-accent/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: "1s" }} />
-          <div className="absolute top-1/2 left-1/3 w-64 h-64 bg-success/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: "2s" }} />
+          <div className="absolute top-1/2 left-1/3 w-64 h-64 bg-accent/15 rounded-full blur-3xl animate-pulse" style={{ animationDelay: "2s" }} />
         </div>
         
         <div className="container relative mx-auto px-4 py-20">
           <div className="mx-auto max-w-5xl">
             {/* Trust Badges */}
             <div className="mb-8 flex flex-wrap items-center justify-center gap-3 animate-fade-in">
-              <Badge className="bg-white/20 text-white backdrop-blur-md border-white/30 px-4 py-2 text-sm font-medium">
+              <Badge className="bg-primary-foreground/20 text-primary-foreground backdrop-blur-md border-primary-foreground/30 px-4 py-2 text-sm font-medium">
                 🏆 UCR Verified
               </Badge>
-              <Badge className="bg-white/20 text-white backdrop-blur-md border-white/30 px-4 py-2 text-sm font-medium">
+              <Badge className="bg-primary-foreground/20 text-primary-foreground backdrop-blur-md border-primary-foreground/30 px-4 py-2 text-sm font-medium">
                 ✓ Verra Approved
               </Badge>
-              <Badge className="bg-white/20 text-white backdrop-blur-md border-white/30 px-4 py-2 text-sm font-medium">
+              <Badge className="bg-primary-foreground/20 text-primary-foreground backdrop-blur-md border-primary-foreground/30 px-4 py-2 text-sm font-medium">
                 🌟 Gold Standard
               </Badge>
             </div>
 
             {/* Main Headline */}
             <div className="text-center animate-fade-in" style={{ animationDelay: "0.2s" }}>
-              <h1 className="mb-6 text-5xl font-extrabold leading-tight text-white md:text-7xl tracking-tight">
+              <h1 className="mb-6 text-5xl font-extrabold leading-tight text-primary-foreground md:text-7xl tracking-tight">
                 India's Leading
                 <br />
-                <span className="bg-gradient-to-r from-green-200 to-emerald-200 bg-clip-text text-transparent">
+                <span className="bg-gradient-to-r from-accent/80 to-accent bg-clip-text text-transparent">
                   Carbon Credit Marketplace
                 </span>
               </h1>
               
-              <p className="mb-8 text-xl text-white/95 md:text-2xl font-light max-w-3xl mx-auto leading-relaxed">
+              <p className="mb-8 text-xl text-primary-foreground/90 md:text-2xl font-light max-w-3xl mx-auto leading-relaxed">
                 Buy verified carbon credits in INR. Support renewable energy projects across India. 
                 Get instant retirement certificates. Make your business carbon neutral today.
               </p>
 
               {/* Key Features */}
-              <div className="mb-10 flex flex-wrap items-center justify-center gap-6 text-white/90">
+              <div className="mb-10 flex flex-wrap items-center justify-center gap-6 text-primary-foreground/85">
                 <div className="flex items-center gap-2">
-                  <CheckCircle2 className="h-5 w-5 text-green-200" />
+                  <CheckCircle2 className="h-5 w-5 text-accent" />
                   <span className="text-sm font-medium">Pay in ₹ INR</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <CheckCircle2 className="h-5 w-5 text-green-200" />
+                  <CheckCircle2 className="h-5 w-5 text-accent" />
                   <span className="text-sm font-medium">Instant Certificates</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <CheckCircle2 className="h-5 w-5 text-green-200" />
+                  <CheckCircle2 className="h-5 w-5 text-accent" />
                   <span className="text-sm font-medium">100% Verified Projects</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <CheckCircle2 className="h-5 w-5 text-green-200" />
+                  <CheckCircle2 className="h-5 w-5 text-accent" />
                   <span className="text-sm font-medium">No Hidden Fees</span>
                 </div>
               </div>
@@ -133,7 +132,7 @@ const Index = () => {
                   variant="default" 
                   size="xl" 
                   asChild 
-                  className="bg-white text-primary hover:bg-white/90 shadow-2xl hover-scale font-semibold text-lg px-8 py-6"
+                  className="bg-background text-primary hover:bg-background/90 shadow-2xl hover-scale font-semibold text-lg px-8 py-6"
                 >
                   <Link to="/marketplace">
                     Browse Projects <ArrowRight className="ml-2 h-5 w-5" />
@@ -143,7 +142,7 @@ const Index = () => {
                   variant="outline" 
                   size="xl" 
                   asChild 
-                  className="border-2 border-white text-white hover:bg-white/10 backdrop-blur-sm font-semibold text-lg px-8 py-6"
+                  className="border-2 border-primary-foreground text-primary-foreground hover:bg-primary-foreground/10 backdrop-blur-sm font-semibold text-lg px-8 py-6"
                 >
                   <Link to="/signup/project-owner">
                     Register Your Project
@@ -152,18 +151,18 @@ const Index = () => {
               </div>
 
               {/* Help Links */}
-              <div className="flex flex-wrap items-center justify-center gap-6 text-sm text-white/80">
-                <Link to="/knowledge" className="flex items-center gap-2 hover:text-white transition-colors story-link">
+              <div className="flex flex-wrap items-center justify-center gap-6 text-sm text-primary-foreground/75">
+                <Link to="/knowledge" className="flex items-center gap-2 hover:text-primary-foreground transition-colors">
                   <Lightbulb className="h-4 w-4" />
                   <span>New to carbon credits?</span>
                 </Link>
-                <span className="text-white/40">•</span>
-                <Link to="/demo-login" className="flex items-center gap-2 hover:text-white transition-colors story-link">
+                <span className="text-primary-foreground/40">•</span>
+                <Link to="/demo-login" className="flex items-center gap-2 hover:text-primary-foreground transition-colors">
                   <Users className="h-4 w-4" />
                   <span>Try Demo Account</span>
                 </Link>
-                <span className="text-white/40">•</span>
-                <Link to="/how-it-works" className="flex items-center gap-2 hover:text-white transition-colors story-link">
+                <span className="text-primary-foreground/40">•</span>
+                <Link to="/how-it-works" className="flex items-center gap-2 hover:text-primary-foreground transition-colors">
                   <Target className="h-4 w-4" />
                   <span>How it works</span>
                 </Link>
@@ -173,20 +172,20 @@ const Index = () => {
             {/* Stats Bar */}
             <div className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-6 animate-fade-in" style={{ animationDelay: "0.4s" }}>
               <div className="text-center">
-                <div className="text-3xl md:text-4xl font-bold text-white mb-1">1.2M+</div>
-                <div className="text-sm text-white/70">Tons CO₂ Offset</div>
+                <div className="text-3xl md:text-4xl font-bold text-primary-foreground mb-1">1.2M+</div>
+                <div className="text-sm text-primary-foreground/65">Tons CO₂ Offset</div>
               </div>
               <div className="text-center">
-                <div className="text-3xl md:text-4xl font-bold text-white mb-1">5,847</div>
-                <div className="text-sm text-white/70">Credits Traded</div>
+                <div className="text-3xl md:text-4xl font-bold text-primary-foreground mb-1">5,847</div>
+                <div className="text-sm text-primary-foreground/65">Credits Traded</div>
               </div>
               <div className="text-center">
-                <div className="text-3xl md:text-4xl font-bold text-white mb-1">234</div>
-                <div className="text-sm text-white/70">Active Projects</div>
+                <div className="text-3xl md:text-4xl font-bold text-primary-foreground mb-1">234</div>
+                <div className="text-sm text-primary-foreground/65">Active Projects</div>
               </div>
               <div className="text-center">
-                <div className="text-3xl md:text-4xl font-bold text-white mb-1">48</div>
-                <div className="text-sm text-white/70">Countries</div>
+                <div className="text-3xl md:text-4xl font-bold text-primary-foreground mb-1">48</div>
+                <div className="text-sm text-primary-foreground/65">Countries</div>
               </div>
             </div>
           </div>
@@ -476,21 +475,21 @@ const Index = () => {
       {/* CTA Section - Enhanced */}
       <section className="py-20">
         <div className="container mx-auto px-4">
-          <Card className="relative overflow-hidden border-0 bg-gradient-to-br from-primary via-primary/95 to-primary/90 shadow-2xl">
+          <Card className="relative overflow-hidden border-0 bg-gradient-hero shadow-2xl">
             {/* Background Pattern */}
             <div className="absolute inset-0 opacity-10">
-              <div className="absolute top-10 right-10 w-64 h-64 bg-white rounded-full blur-3xl" />
+              <div className="absolute top-10 right-10 w-64 h-64 bg-primary-foreground rounded-full blur-3xl" />
               <div className="absolute bottom-10 left-10 w-96 h-96 bg-accent rounded-full blur-3xl" />
             </div>
             
             <div className="relative px-6 py-16 text-center md:px-12 md:py-20">
-              <Badge className="mb-6 bg-white/20 text-white backdrop-blur-md border-white/30 px-4 py-2">
+              <Badge className="mb-6 bg-primary-foreground/20 text-primary-foreground backdrop-blur-md border-primary-foreground/30 px-4 py-2">
                 Join 1000+ Organizations
               </Badge>
-              <h2 className="mb-6 text-4xl font-bold text-white md:text-5xl">
+              <h2 className="mb-6 text-4xl font-bold text-primary-foreground md:text-5xl">
                 Ready to Make an Impact?
               </h2>
-              <p className="mx-auto mb-10 max-w-2xl text-lg text-white/95 leading-relaxed">
+              <p className="mx-auto mb-10 max-w-2xl text-lg text-primary-foreground/90 leading-relaxed">
                 Join thousands of organizations and individuals offsetting their carbon footprint. 
                 Start your journey to carbon neutrality today with verified credits in INR.
               </p>
@@ -499,7 +498,7 @@ const Index = () => {
                   variant="default" 
                   size="xl" 
                   asChild 
-                  className="bg-white text-primary hover:bg-white/90 shadow-xl hover-scale font-semibold text-lg px-8"
+                  className="bg-background text-primary hover:bg-background/90 shadow-xl hover-scale font-semibold text-lg px-8"
                 >
                   <Link to="/signup">Get Started Today</Link>
                 </Button>
@@ -507,14 +506,14 @@ const Index = () => {
                   variant="outline" 
                   size="xl" 
                   asChild 
-                  className="border-2 border-white text-white hover:bg-white/10 backdrop-blur-sm font-semibold text-lg px-8"
+                  className="border-2 border-primary-foreground text-primary-foreground hover:bg-primary-foreground/10 backdrop-blur-sm font-semibold text-lg px-8"
                 >
                   <Link to="/marketplace">Browse Projects</Link>
                 </Button>
               </div>
               
               {/* Trust Indicators */}
-              <div className="mt-12 flex flex-wrap items-center justify-center gap-8 text-white/80">
+              <div className="mt-12 flex flex-wrap items-center justify-center gap-8 text-primary-foreground/75">
                 <div className="flex items-center gap-2">
                   <Shield className="h-5 w-5" />
                   <span className="text-sm">100% Secure</span>
