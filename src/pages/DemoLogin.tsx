@@ -29,7 +29,7 @@ const DemoLogin = () => {
         "Track portfolio and transaction history",
         "Retire credits and generate certificates"
       ],
-      color: "from-blue-500 to-blue-600",
+      color: "from-primary to-primary-light",
       redirect: "/dashboard"
     },
     {
@@ -44,7 +44,7 @@ const DemoLogin = () => {
         "Monitor credit issuance analytics",
         "View sales and revenue reports"
       ],
-      color: "from-green-500 to-green-600",
+      color: "from-accent to-accent/80",
       redirect: "/owner-analytics"
     },
     {
@@ -59,7 +59,7 @@ const DemoLogin = () => {
         "Monitor all transactions",
         "Access comprehensive analytics"
       ],
-      color: "from-purple-500 to-purple-600",
+      color: "from-primary-dark to-primary",
       redirect: "/admin"
     }
   ];
@@ -204,8 +204,8 @@ const DemoLogin = () => {
 
           {/* Setup Alert */}
           {accountsExist === false && (
-            <Alert className="mb-8 border-orange-500/50 bg-orange-500/10">
-              <AlertCircle className="h-4 w-4 text-orange-500" />
+             <Alert className="mb-8 border-warning/50 bg-warning/10">
+               <AlertCircle className="h-4 w-4 text-warning" />
               <AlertDescription className="ml-2">
                 <div className="flex items-center justify-between">
                   <span className="text-foreground">
@@ -244,11 +244,11 @@ const DemoLogin = () => {
                 <Card key={account.role} className="relative overflow-hidden transition-all hover:shadow-xl">
                   {/* Gradient Header */}
                   <div className={`bg-gradient-to-br ${account.color} p-6`}>
-                    <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-white/20 backdrop-blur-sm">
-                      <Icon className="h-8 w-8 text-white" />
+                    <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-primary-foreground/20 backdrop-blur-sm">
+                      <Icon className="h-8 w-8 text-primary-foreground" />
                     </div>
-                    <h2 className="text-2xl font-bold text-white">{account.role}</h2>
-                    <p className="mt-2 text-sm text-white/80">{account.description}</p>
+                    <h2 className="text-2xl font-bold text-primary-foreground">{account.role}</h2>
+                    <p className="mt-2 text-sm text-primary-foreground/80">{account.description}</p>
                   </div>
 
                   <CardContent className="p-6">
