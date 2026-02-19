@@ -91,48 +91,22 @@ export default function PurchaseProject() {
     try {
       setPurchasing(true);
 
-      // Create transaction
-      const { error: transactionError } = await supabase
-        .from("transactions")
-        .insert({
-          buyer_id: user.id,
-          seller_id: project.owner_id,
-          project_id: project.id,
-          credits: creditAmount,
-          price_per_ton: priceInINR,
-          total_amount: totalCost,
-          transaction_type: "purchase",
-          status: "completed",
-        });
+      // Use atomic server-side function to prevent race conditions and double-spending
+      const { data, error } = await supabase.rpc("purchase_credits", {
+        p_buyer_id: user.id,
+        p_project_id: project.id,
+        p_credits: creditAmount,
+        p_price_per_ton: priceInINR,
+      });
 
-      if (transactionError) throw transactionError;
-
-      // Update project available credits
-      const { error: projectError } = await supabase
-        .from("projects")
-        .update({
-          available_credits: project.available_credits - creditAmount,
-        })
-        .eq("id", project.id);
-
-      if (projectError) throw projectError;
-
-      // Update buyer wallet
-      const { error: walletError } = await supabase
-        .from("wallets")
-        .update({
-          balance: wallet.balance - totalCost,
-          total_credits: wallet.total_credits + creditAmount,
-        })
-        .eq("user_id", user.id);
-
-      if (walletError) throw walletError;
+      if (error) throw error;
 
       toast.success("Purchase completed successfully!");
       navigate("/dashboard");
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error processing purchase:", error);
-      toast.error("Failed to complete purchase");
+      const message = error?.message || "Failed to complete purchase";
+      toast.error(message.includes("Insufficient") ? message : "Failed to complete purchase");
     } finally {
       setPurchasing(false);
     }

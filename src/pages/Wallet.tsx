@@ -133,33 +133,21 @@ const Wallet = () => {
     }
 
     try {
-      // Generate serial number (UCR format)
-      const serialNumber = `UCR-${Date.now()}-${user?.id.substring(0, 8)}`;
-      
-      // Create retirement certificate
-      const { data: certData, error: certError } = await supabase
-        .from("retirement_certificates")
-        .insert({
-          user_id: user?.id,
-          project_id: transactions[0]?.project_id || null, // Get from last transaction
-          credits_retired: amount,
-          serial_number: serialNumber,
-          retirement_reason: retireReason || "Voluntary carbon offset",
-        })
-        .select()
-        .single();
+      const projectId = transactions[0]?.project_id;
+      if (!projectId) {
+        toast.error("No project found to retire credits for");
+        return;
+      }
 
-      if (certError) throw certError;
+      // Use atomic server-side function to prevent race conditions
+      const { data, error } = await supabase.rpc("retire_credits", {
+        p_user_id: user?.id,
+        p_project_id: projectId,
+        p_credits: amount,
+        p_reason: retireReason || "Voluntary carbon offset",
+      });
 
-      // Update wallet
-      const { error: walletError } = await supabase
-        .from("wallets")
-        .update({
-          total_credits: wallet.total_credits - amount,
-        })
-        .eq("user_id", user?.id);
-
-      if (walletError) throw walletError;
+      if (error) throw error;
 
       toast.success("Credits retired successfully! Certificate generated.");
       setShowRetireDialog(false);
@@ -168,8 +156,8 @@ const Wallet = () => {
       fetchWalletData();
       fetchCertificates();
     } catch (error: any) {
-      toast.error("Failed to retire credits");
-      console.error(error);
+      const message = error?.message || "Failed to retire credits";
+      toast.error(message.includes("Insufficient") ? message : "Failed to retire credits");
     }
   };
 
