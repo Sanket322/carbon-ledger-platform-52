@@ -455,6 +455,24 @@ export type Database = {
         }
         Returns: boolean
       }
+      purchase_credits: {
+        Args: {
+          p_buyer_id: string
+          p_credits: number
+          p_price_per_ton: number
+          p_project_id: string
+        }
+        Returns: Json
+      }
+      retire_credits: {
+        Args: {
+          p_credits: number
+          p_project_id: string
+          p_reason?: string
+          p_user_id: string
+        }
+        Returns: Json
+      }
     }
     Enums: {
       app_role: "admin" | "buyer" | "trader" | "project_owner"
